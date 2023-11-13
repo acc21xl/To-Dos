@@ -1,4 +1,8 @@
 package com.example.tailtasks.dao
 
-class DogDao {
+import androidx.room.Dao
+
+@Dao
+interface DogDao {
+    // Define database interactions here
 }

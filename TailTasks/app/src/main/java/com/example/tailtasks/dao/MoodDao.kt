@@ -1,4 +1,8 @@
 package com.example.tailtasks.dao
 
-class MoodDao {
+import androidx.room.Dao
+
+@Dao
+interface MoodDao {
+    // Define database interactions here
 }

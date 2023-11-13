@@ -1,4 +1,8 @@
 package com.example.tailtasks.dao
 
-class TagDao {
+import androidx.room.Dao
+
+@Dao
+interface TagDao {
+    // Define database interactions here
 }

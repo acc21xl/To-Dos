@@ -1,4 +1,9 @@
 package com.example.tailtasks.dao
 
-class TodoDao {
+import androidx.room.Dao
+
+@Dao
+interface TodoDao {
+    // Define database interactions here
 }
+
