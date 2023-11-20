@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.tailtasks.model.Dog
+import com.example.tailtasks.screens.AddDogScreen
 import com.example.tailtasks.ui.theme.TailTasksTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,25 +24,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    AddDogScreen(onDogAdded = { dog ->
+                        // Add Dog
+                    })
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TailTasksTheme {
-        Greeting("Android")
     }
 }
