@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import com.example.tailtasks.enums.MoodScore
 
 @Entity(
-    tableName = "moods",
+    tableName = Mood.TABLE_NAME,
     foreignKeys = [
         ForeignKey(entity = Todo::class, parentColumns = ["id"], childColumns = ["todo_id"])
     ]
@@ -16,4 +16,8 @@ data class Mood(
     val todo_id: Int,
     val score: MoodScore,
     val notes: String
-)
+){
+    companion object {
+        const val TABLE_NAME = "moods"
+    }
+}

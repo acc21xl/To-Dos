@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
 
-@Entity(tableName = "dogs")
+@Entity(tableName = Dog.TABLE_NAME)
 data class Dog(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
@@ -15,4 +15,8 @@ data class Dog(
     val notes: String,
     val current_mood: Float, // Calculated property, not stored in DB
     val deleted: Boolean
-)
+){
+    companion object {
+        const val TABLE_NAME = "dogs"
+    }
+}

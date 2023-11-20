@@ -7,7 +7,7 @@ import com.example.tailtasks.enums.Status
 import java.util.Date
 
 @Entity(
-    tableName = "todos",
+    tableName = Todo.TABLE_NAME,
     foreignKeys = [
         ForeignKey(entity = Tag::class, parentColumns = ["id"], childColumns = ["tag_id"]),
         ForeignKey(entity = Dog::class, parentColumns = ["id"], childColumns = ["dog_id"]),
@@ -33,4 +33,8 @@ data class Todo(
     val repeat: Boolean,
     val repeat_frequency: String,
     val deleted: Boolean
-)
+) {
+    companion object {
+        const val TABLE_NAME = "todos"
+    }
+}
