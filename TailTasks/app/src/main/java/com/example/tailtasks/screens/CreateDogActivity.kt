@@ -43,11 +43,14 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.tailtasks.database.TailTasksDatabase
 import com.example.tailtasks.model.Dog
 import com.example.tailtasks.ui.theme.TailTasksTheme
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -103,6 +106,13 @@ fun AddDogScreen(onDogAdded: (Dog) -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val buttonScope = rememberCoroutineScope()
+        val dao = TailTasksDatabase.getDB(LocalContext.current).dogDao()
+        fun insertOnClick(dog: Dog){
+            buttonScope.launch {
+                dao.insert(dog)
+            }
+        }
         Button(
             onClick = {
                 // Convert the Bitmap to ByteArray
@@ -125,7 +135,7 @@ fun AddDogScreen(onDogAdded: (Dog) -> Unit) {
                     deleted = false,
                     id = 0
                 )
-
+                insertOnClick(dog)
                 onDogAdded(dog)
             },
             modifier = Modifier.align(Alignment.End)
@@ -134,6 +144,7 @@ fun AddDogScreen(onDogAdded: (Dog) -> Unit) {
         }
     }
 }
+
 
 @Composable
 fun DogImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
