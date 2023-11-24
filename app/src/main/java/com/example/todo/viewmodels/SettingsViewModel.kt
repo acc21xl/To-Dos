@@ -9,8 +9,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(private val todoDAO: TodoDAO) : ViewModel() {
-    private val _tasks = MutableStateFlow<List<TodoEntity>>(emptyList())
-    val tasks = _tasks.asStateFlow()
+    // Active tasks
+    private val _activeTasks = MutableStateFlow<List<TodoEntity>>(emptyList())
+    val activeTasks = _activeTasks.asStateFlow()
+
+    // Completed tasks
+    private val _completedTasks = MutableStateFlow<List<TodoEntity>>(emptyList())
+    val completedTasks = _completedTasks.asStateFlow()
 
     init {
         loadTasks()
@@ -19,24 +24,43 @@ class SettingsViewModel(private val todoDAO: TodoDAO) : ViewModel() {
     private fun loadTasks() {
         viewModelScope.launch {
             todoDAO.getAllTodos().collect { listOfTodos ->
-                _tasks.value = listOfTodos
+                _activeTasks.value = listOfTodos.filter { !it.isCompleted }
+                _completedTasks.value = listOfTodos.filter { it.isCompleted }
+            }
         }
     }
-}
 
     fun addTask(taskText: String) {
         viewModelScope.launch {
             val newTask = TodoEntity(text = taskText, isCompleted = false)
             todoDAO.insert(newTask)
-            loadTasks() // Reload the tasks to update the UI
         }
     }
 
     fun updateTask(task: TodoEntity) {
         viewModelScope.launch {
             todoDAO.update(task)
-            loadTasks() // Reload the tasks to update the UI
+            // Ensure the below method is called to refresh the list
+            loadTasks()
         }
     }
+
+    fun loadCompletedTasks() {
+        viewModelScope.launch {
+            todoDAO.getCompletedTodos().collect { listOfCompletedTodos ->
+                _completedTasks.value = listOfCompletedTodos
+            }
+        }
+    }
+
+    fun loadActiveTasks() {
+        viewModelScope.launch {
+            todoDAO.getActiveTodos().collect { listOfActiveTodos ->
+                _activeTasks.value = listOfActiveTodos
+            }
+        }
+    }
+
+
 }
 

@@ -21,4 +21,11 @@ interface TodoDAO {
 
     @Query("SELECT * FROM todos ORDER BY id ASC")
     fun getAllTodos(): Flow<List<TodoEntity>>
+
+    @Query("SELECT * FROM todos WHERE isCompleted = 0 ORDER BY id ASC")
+    fun getActiveTodos(): Flow<List<TodoEntity>>
+
+    @Query("SELECT * FROM todos WHERE isCompleted = 1 ORDER BY id ASC")
+    fun getCompletedTodos(): Flow<List<TodoEntity>>
+
 }
