@@ -4,23 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,35 +27,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.todo.entities.TodoEntity
+import com.example.todo.screens.ActiveTasksScreen
+import com.example.todo.screens.CompletedTasksHistoryScreen
+import com.example.todo.screens.TodoForm
 import com.example.todo.ui.theme.TodoTheme
-import com.example.todo.viewmodels.SettingsViewModel
-import com.example.todo.viewmodels.SettingsViewModelFactory
+import com.example.todo.viewmodels.TodosViewModel
+import com.example.todo.viewmodels.TodosViewModelFactory
 
 
 class MainActivity : ComponentActivity() {
-    private val settingsViewModel: SettingsViewModel by viewModels {
-        SettingsViewModelFactory((application as TodoApplication).todoDAO)
+    private val todosViewModel: TodosViewModel by viewModels {
+        TodosViewModelFactory((application as TodoApplication).todoDAO,
+            (application as TodoApplication).dogDAO,
+            (application as TodoApplication).tagDAO,
+            (application as TodoApplication).moodDAO)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TodoTheme {
-
-                // Pass the viewModel instance to ScreenScaffold
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(settingsViewModel)
+                    MainScreen(todosViewModel)
                 }
             }
         }
@@ -70,8 +69,9 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(settingsViewModel: SettingsViewModel) {
+fun MainScreen(todosViewModel: TodosViewModel) {
     val navController = rememberNavController()
+    var showTodoForm by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -82,60 +82,32 @@ fun MainScreen(settingsViewModel: SettingsViewModel) {
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { settingsViewModel.addTask("") },
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            ) {
+            FloatingActionButton(onClick = {
+                showTodoForm = true
+            }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Task")
             }
         },
-//        floatingActionButtonPosition = FabPosition.Center
     ) { paddingValues ->
-        NavHost(navController, startDestination = "tasks", modifier = Modifier.padding(paddingValues)) {
-            composable("tasks") { ActiveTasksScreen(settingsViewModel) }
-            composable("history") {
-                // Force UI refresh when navigating to the "history" screen
+        if (showTodoForm) {
+            TodoForm(todosViewModel){
+                showTodoForm = false
+            }
+        } else {
+            NavHost(navController, startDestination = "tasks", modifier = Modifier.padding(paddingValues)) {
+                composable("tasks") { ActiveTasksScreen(todosViewModel) }
+                composable("history") {
+                    // Force UI refresh when navigating to the "history" screen
                     LaunchedEffect(Unit) {
-                        settingsViewModel.loadCompletedTasks()
+                        todosViewModel.loadCompletedTasks()
                     }
-                    CompletedTasksHistoryScreen(settingsViewModel)
+                    CompletedTasksHistoryScreen(todosViewModel)
+                }
             }
         }
     }
 }
 
-@Composable
-fun ActiveTasksScreen(settingsViewModel: SettingsViewModel) {
-    val activeTasks by settingsViewModel.activeTasks.collectAsState()
-    Column(verticalArrangement = Arrangement.SpaceEvenly) {
-        // Display only active tasks
-        activeTasks.forEach { task ->
-            TaskRow(task, onTaskCheckedChange = { isChecked ->
-                settingsViewModel.updateTask(task.copy(isCompleted = isChecked))
-            }, onTaskTextChange = { updatedText ->
-                // Update the text for an existing task when the user finishes editing the text field
-                settingsViewModel.updateTask(task.copy(text = updatedText))
-            })
-        }
-    }
-}
-// Composable for completed tasks history
-@Composable
-fun CompletedTasksHistoryScreen(settingsViewModel: SettingsViewModel) {
-    val completedTasks by settingsViewModel.completedTasks.collectAsState()
-
-    Column {
-        // Display completed tasks
-        completedTasks.forEach { task ->
-            TaskRow(task, onTaskCheckedChange = { isChecked ->
-                settingsViewModel.updateTask(task.copy(isCompleted = isChecked))
-            }, onTaskTextChange = { updatedText ->
-                // Update the text for an existing task when the user finishes editing the text field
-                settingsViewModel.updateTask(task.copy(text = updatedText))
-            })
-        }
-    }
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskRow(
@@ -143,7 +115,7 @@ fun TaskRow(
     onTaskCheckedChange: (Boolean) -> Unit,
     onTaskTextChange: (String) -> Unit,
 
-) {
+    ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -152,13 +124,13 @@ fun TaskRow(
             onCheckedChange = onTaskCheckedChange
         )
         TextField(
-            value = task.text,
+            value = task.title,
             onValueChange = onTaskTextChange,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp), // Ensure padding inside the TextField
+                .padding(horizontal = 8.dp),
             singleLine = true,
-            placeholder = { Text("Enter task here")} // Ensure placeholder is visible
+            placeholder = { Text("Enter task here")}
         )
 
     }

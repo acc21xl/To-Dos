@@ -4,11 +4,20 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.todo.converters.Converters
+import com.example.todo.entities.DogEntity
+import com.example.todo.entities.MoodEntity
+import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
 
-@Database(entities = [TodoEntity::class], version = 1, exportSchema = false)
+@Database(entities = [TodoEntity::class, DogEntity::class, TagEntity::class, MoodEntity::class], version = 3, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class TodoDatabase : RoomDatabase() {
     abstract fun todoDAO(): TodoDAO
+    abstract fun dogDAO(): DogDAO
+    abstract fun tagDAO(): TagDAO
+    abstract fun moodDAO(): MoodDAO
 
     companion object {
         private const val DB_NAME = "todo_db"
