@@ -6,8 +6,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
+import com.example.todo.entities.TodoTagJoin
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -28,4 +31,21 @@ interface TodoDAO {
 
     @Query("SELECT * FROM todos WHERE isCompleted = 1 ORDER BY id ASC")
     fun getCompletedTodos(): Flow<List<TodoEntity>>
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTag(tag: TagEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTodoTagJoin(todoTagJoin: TodoTagJoin)
+
+    @Query("SELECT * FROM tags WHERE title = :name")
+    suspend fun getTagByName(name: String): TagEntity?
+
+    @Transaction
+    suspend fun insertNewTodoWithTags(newTodo: TodoEntity, tags: List<TagEntity>) {
+        val newTodoId = insert(newTodo)
+        tags.forEach { tag ->
+            val tagId = getTagByName(tag.title)?.id ?: insertTag(tag)
+            insertTodoTagJoin(TodoTagJoin(newTodoId, tagId.toLong()))
+        }
+    }
 }

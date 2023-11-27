@@ -32,15 +32,8 @@ class TodosViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
     val completedTasks = _completedTasks.asStateFlow()
     init {
         loadTasks()
+        loadActiveTasks()
         loadDog()
-    }
-
-    fun updateTask(task: TodoEntity) {
-        viewModelScope.launch {
-            todoDAO.update(task)
-            // Ensure the below method is called to refresh the list
-            loadTasks()
-        }
     }
 
     fun loadCompletedTasks() {
@@ -73,65 +66,19 @@ class TodosViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
             dog.value = dogs.firstOrNull()
         }
     }
-
     fun submitTodo(
-        title: String, description: String, tags: List<TagEntity>, mood: MoodScore,
-        priority: Priority, status: Status, repeat: Boolean, repeatFrequency: Int,
-        latitude: Double, longitude: Double, distance: Double, isCompleted: Boolean,
-        toCompleteByDate: Date, creationDate: Date, completionDate: Date?
+        newTodo: TodoEntity, tags: List<TagEntity>
     ) {
         viewModelScope.launch {
-            fun submitTodo(
-                title: String, description: String, tags: List<TagEntity>, mood: MoodScore,
-                priority: Priority, status: Status, repeat: Boolean, repeatFrequency: Int,
-                latitude: Double, longitude: Double, distance: Double, isCompleted: Boolean,
-                toCompleteByDate: Date, creationDate: Date, completionDate: Date?
-            ) {
-                viewModelScope.launch {
-                    val newTodo = TodoEntity(
-                        title = title,
-                        description = description,
-                        tagId = 0,
-                        dogId = dog.value?.id ?: 0,
-                        moodId = 0,
-                        priority = priority,
-                        status = status,
-                        repeat = repeat,
-                        repeatFrequency = repeatFrequency,
-                        latitude = latitude,
-                        longitude = longitude,
-                        distance = distance,
-                        isCompleted = isCompleted,
-                        toCompleteByDate = toCompleteByDate,
-                        creationDate = creationDate,
-                        completionDate = completionDate,
-                        deleted = false,
-                        imageBytes = null
-                    )
-                    val newTodoId = todoDAO.insert(newTodo)
+            val newTodoId = todoDAO.insertNewTodoWithTags(newTodo, tags)
+            loadTasks()
+        }
+    }
 
-                    val moodEntity = MoodEntity(
-                        todoId = newTodoId.toInt(), score = mood,
-                        notes = "", id = 0
-                    )
-                    moodDAO.insert(moodEntity)
-                    loadTasks()
-                }
-            }
-
-            fun addTag(tagTitle: String, onTagAdded: (TagEntity) -> Unit) {
-                viewModelScope.launch {
-                    val newTag = TagEntity(title = tagTitle, id = 0)
-                    onTagAdded(newTag.copy(id = 0))
-                }
-            }
-
-            fun updateTask(task: TodoEntity) {
-                viewModelScope.launch {
-                    todoDAO.update(task)
-                    loadTasks()
-                }
-            }
+    fun updateTask(task: TodoEntity) {
+        viewModelScope.launch {
+            todoDAO.update(task)
+            loadTasks()
         }
     }
 }

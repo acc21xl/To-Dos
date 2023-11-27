@@ -83,17 +83,12 @@ fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val selectedTags = remember { mutableStateListOf<TagEntity>() }
-    var selectedMood by remember { mutableStateOf<MoodScore>(MoodScore.NEUTRAL) }
     var priority by remember { mutableStateOf(Priority.LOW) }
-    var status by remember { mutableStateOf(Status.ONGOING) }
     var repeat by remember { mutableStateOf(false) }
     var latitude by remember { mutableStateOf(0.0) }
     var longitude by remember { mutableStateOf(0.0) }
     var distance by remember { mutableStateOf(0.0) }
-    var isCompleted by remember { mutableStateOf(false) }
     var toCompleteByDate by remember { mutableStateOf(Date()) }
-    var creationDate by remember { mutableStateOf(Date()) }
-    var completionDate by remember { mutableStateOf<Date?>(null) }
     var repeatFrequency by remember { mutableStateOf(RepeatFrequency.Daily) }
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
@@ -205,41 +200,24 @@ fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
                         val newTodo = TodoEntity(
                             title = title,
                             description = description,
-                            tagId = 0, // Filled out later
                             dogId = 0, // Filled out later
-                            moodId = 0, // Filled out later
+                            moodId = null,
                             priority = priority,
-                            status = status,
+                            status = Status.ONGOING,
                             repeat = repeat,
                             repeatFrequency = repeatFrequency.ordinal,
                             latitude = latitude,
                             longitude = longitude,
                             distance = distance,
-                            isCompleted = isCompleted,
+                            isCompleted = false,
                             toCompleteByDate = toCompleteByDate,
                             creationDate = Date(),
                             completionDate = null,
                             deleted = false,
                             imageBytes = imageBytes
                         )
-                        viewModel.submitTodo(
-                            title,
-                            description,
-                            selectedTags,
-                            selectedMood,
-                            priority,
-                            status,
-                            repeat,
-                            repeatFrequency.ordinal,
-                            latitude,
-                            longitude,
-                            distance,
-                            isCompleted,
-                            toCompleteByDate,
-                            creationDate,
-                            completionDate
-                        )
 
+                        viewModel.submitTodo(newTodo, selectedTags)
                         onClose()
                     } else {
                         // Show error message for invalid input
