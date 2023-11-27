@@ -1,23 +1,36 @@
 package com.example.todo.screens
 
+import android.Manifest
 import android.app.DatePickerDialog
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.widget.DatePicker
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -41,11 +55,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.tailtasks.enums.MoodScore
 import com.example.tailtasks.enums.Priority
 import com.example.tailtasks.enums.Status
@@ -53,6 +71,7 @@ import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
 import com.example.todo.enums.RepeatFrequency
 import com.example.todo.viewmodels.TodosViewModel
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -76,131 +95,162 @@ fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
     var creationDate by remember { mutableStateOf(Date()) }
     var completionDate by remember { mutableStateOf<Date?>(null) }
     var repeatFrequency by remember { mutableStateOf(RepeatFrequency.Daily) }
+    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
 
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        TextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text("Title") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        TextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Description") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        DateInput("To Complete By", toCompleteByDate) { newDate ->
-            toCompleteByDate = newDate
+    Column(modifier = Modifier.fillMaxSize()) {
+        BannerImagePicker(imageBitmap) { newBitmap ->
+            imageBitmap = newBitmap
+            imageBytes = bitmapToByteArray(newBitmap)
         }
-        Spacer(Modifier.height(8.dp))
 
-        TagInput(viewModel, selectedTags)
-        Spacer(Modifier.height(8.dp))
-
-
-        // Dropdowns or selectors for Priority and Status
-        DropdownPriority(priority) { priority = it }
-
-        // Repeat Checkbox and Frequency Selector
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(
-                checked = repeat,
-                onCheckedChange = { repeat = it }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 128.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Spacer(Modifier.height(8.dp))
+            TextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Title") },
+                modifier = Modifier.fillMaxWidth()
             )
-            Text("Repeat")
-        }
+            Spacer(Modifier.height(8.dp))
 
-        // Show Repeat Frequency Selector if repeat is true
-        if (repeat) {
-            RepeatFrequencySelector(
-                selectedFrequency = repeatFrequency,
-                onFrequencySelected = { repeatFrequency = it }
+            TextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Description") },
+                modifier = Modifier.fillMaxWidth()
             )
-        }
-        Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
 
-        BoxWithConstraints {
-            val maxWidth = this.maxWidth
-            val fieldWidth = maxWidth / 3
-
-            Row(horizontalArrangement = Arrangement.Start) {
-                NumberInputField(value = latitude, onValueChange = { latitude = it }, label = "Latitude", width = fieldWidth)
-                NumberInputField(value = longitude, onValueChange = { longitude = it }, label = "Longitude", width = fieldWidth)
-                NumberInputField(value = distance, onValueChange = { distance = it }, label = "Distance", width = fieldWidth)
+            DateInput("To Complete By", toCompleteByDate) { newDate ->
+                toCompleteByDate = newDate
             }
-        }
-        Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(8.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Button(
-                onClick = onClose,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary, // Non-primary color
-                    contentColor = MaterialTheme.colorScheme.onSecondary // Text color that contrasts with the background
+            TagInput(viewModel, selectedTags)
+            Spacer(Modifier.height(8.dp))
+
+
+            // Dropdowns or selectors for Priority and Status
+            DropdownPriority(priority) { priority = it }
+
+            // Repeat Checkbox and Frequency Selector
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = repeat,
+                    onCheckedChange = { repeat = it }
                 )
-            ) {
-                Text("Cancel")
+                Text("Repeat")
             }
 
-            Button(onClick = {
-                if (validateTodoInput(title, description)) {
-                    val newTodo = TodoEntity(
-                        title = title,
-                        description = description,
-                        tagId = 0, // Filled out later
-                        dogId = 0, // Filled out later
-                        moodId = 0, // Filled out later
-                        priority = priority,
-                        status = status,
-                        repeat = repeat,
-                        repeatFrequency = repeatFrequency.ordinal,
-                        latitude = latitude,
-                        longitude = longitude,
-                        distance = distance,
-                        isCompleted = isCompleted,
-                        toCompleteByDate = toCompleteByDate,
-                        creationDate = Date(),
-                        completionDate = null,
-                        deleted = false,
-                        imageBytes = null
-                    )
-                    viewModel.submitTodo(
-                        title,
-                        description,
-                        selectedTags,
-                        selectedMood,
-                        priority,
-                        status,
-                        repeat,
-                        repeatFrequency.ordinal,
-                        latitude,
-                        longitude,
-                        distance,
-                        isCompleted,
-                        toCompleteByDate,
-                        creationDate,
-                        completionDate
-                    )
+            // Show Repeat Frequency Selector if repeat is true
+            if (repeat) {
+                RepeatFrequencySelector(
+                    selectedFrequency = repeatFrequency,
+                    onFrequencySelected = { repeatFrequency = it }
+                )
+            }
+            Spacer(Modifier.height(8.dp))
 
-                    onClose()
-                } else {
-                    // Show error message for invalid input
+            BoxWithConstraints {
+                val maxWidth = this.maxWidth
+                val fieldWidth = maxWidth / 3
+
+                Row(horizontalArrangement = Arrangement.Start) {
+                    NumberInputField(
+                        value = latitude,
+                        onValueChange = { latitude = it },
+                        label = "Latitude",
+                        width = fieldWidth
+                    )
+                    NumberInputField(
+                        value = longitude,
+                        onValueChange = { longitude = it },
+                        label = "Longitude",
+                        width = fieldWidth
+                    )
+                    NumberInputField(
+                        value = distance,
+                        onValueChange = { distance = it },
+                        label = "Distance",
+                        width = fieldWidth
+                    )
                 }
-            }) {
-                Text("Submit Todo")
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Button(
+                    onClick = onClose,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    ),
+                    modifier = Modifier.padding(vertical = 0.dp, horizontal = 8.dp)
+                ) {
+                    Text("Cancel")
+                }
+
+                Button(onClick = {
+                    if (validateTodoInput(title, description)) {
+                        val newTodo = TodoEntity(
+                            title = title,
+                            description = description,
+                            tagId = 0, // Filled out later
+                            dogId = 0, // Filled out later
+                            moodId = 0, // Filled out later
+                            priority = priority,
+                            status = status,
+                            repeat = repeat,
+                            repeatFrequency = repeatFrequency.ordinal,
+                            latitude = latitude,
+                            longitude = longitude,
+                            distance = distance,
+                            isCompleted = isCompleted,
+                            toCompleteByDate = toCompleteByDate,
+                            creationDate = Date(),
+                            completionDate = null,
+                            deleted = false,
+                            imageBytes = imageBytes
+                        )
+                        viewModel.submitTodo(
+                            title,
+                            description,
+                            selectedTags,
+                            selectedMood,
+                            priority,
+                            status,
+                            repeat,
+                            repeatFrequency.ordinal,
+                            latitude,
+                            longitude,
+                            distance,
+                            isCompleted,
+                            toCompleteByDate,
+                            creationDate,
+                            completionDate
+                        )
+
+                        onClose()
+                    } else {
+                        // Show error message for invalid input
+                    }
+                }) {
+                    Text("Submit Todo")
+                }
+            }
             }
         }
     }
-}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -321,7 +371,7 @@ fun getMoodFromSliderPosition(position: Int): MoodScore {
         3 -> MoodScore.NEUTRAL
         4 -> MoodScore.HAPPY
         5 -> MoodScore.EXCELLENT
-        else -> MoodScore.NEUTRAL // Default case
+        else -> MoodScore.NEUTRAL
     }
 }
 
@@ -394,6 +444,72 @@ fun RepeatFrequencySelector(selectedFrequency: RepeatFrequency, onFrequencySelec
             }
         }
     }
+}
+
+@Composable
+fun BannerImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
+    var hasCameraPermission by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview(),
+        onResult = { bitmap: Bitmap? ->
+            bitmap?.let { onImageCaptured(it) }
+        }
+    )
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            hasCameraPermission = isGranted
+            if (isGranted) {
+                cameraLauncher.launch(null)
+            } else {
+                // Permission denied
+            }
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        hasCameraPermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .background(if (imageBitmap != null) Color.Transparent else Color.LightGray)
+            .clickable {
+                if (hasCameraPermission) {
+                    cameraLauncher.launch(null)
+                } else {
+                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            }
+    ) {
+        imageBitmap?.let {
+            Image(
+                bitmap = it.asImageBitmap(),
+                contentDescription = "Captured Image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } ?: Icon(
+            imageVector = Icons.Filled.CameraAlt,
+            contentDescription = "Open Camera",
+            modifier = Modifier.size(36.dp)
+        )
+    }
+}
+
+fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+    val stream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    return stream.toByteArray()
 }
 
 

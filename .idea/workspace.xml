@@ -9,34 +9,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57e06d36-ad5d-4f93-92d1-fe5e1db7c77c" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/converters/Converters.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/DogDAO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/MoodDAO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/TagDAO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/DogEntity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/MoodEntity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TagEntity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/enums/MoodScore.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/enums/Priority.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/enums/RepeatFrequency.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/enums/Status.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ActiveTasksScreen.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/CreateDogActivity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TaskHistoryScreen.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TodosList.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/TodosViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/TodosViewModelFactory.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="57e06d36-ad5d-4f93-92d1-fe5e1db7c77c" name="Changes" comment="Added All Dao's, and added entire UI for creating a Todo. Submit to database not yet functional due to foreign key constraint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/TodoApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/TodoApplication.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/TodoDAO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/TodoDAO.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/TodoDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/TodoDatabase.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TodoEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TodoEntity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/SettingsViewModel.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/SettingsViewModelFactory.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TodosList.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TodosList.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,6 +177,14 @@
       <option name="presentableId" value="Default" />
       <updated>1699625151615</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added All Dao's, and added entire UI for creating a Todo. Submit to database not yet functional due to foreign key constraint">
+      <created>1701088334095</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1701088334095</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -216,6 +200,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial Commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit" />
+    <MESSAGE value="Added All Dao's, and added entire UI for creating a Todo. Submit to database not yet functional due to foreign key constraint" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added All Dao's, and added entire UI for creating a Todo. Submit to database not yet functional due to foreign key constraint" />
   </component>
 </project>
