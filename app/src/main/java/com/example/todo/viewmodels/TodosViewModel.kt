@@ -75,6 +75,19 @@ class TodosViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
         }
     }
 
+    fun createDog(newDogEntity: DogEntity) {
+        viewModelScope.launch {
+            try {
+                println("Inserting dog: $newDogEntity")
+                dogDAO.insert(newDogEntity)
+                loadDog()
+                println("Dog inserted successfully")
+            } catch (e: Exception) {
+                println("Error inserting dog: ${e.message}")
+            }
+        }
+    }
+
     fun updateTask(task: TodoEntity) {
         viewModelScope.launch {
             todoDAO.update(task)

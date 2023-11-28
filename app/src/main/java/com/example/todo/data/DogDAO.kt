@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.todo.entities.DogEntity
 import kotlinx.coroutines.flow.Flow
+
 @Dao
 interface DogDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)

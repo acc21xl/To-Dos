@@ -31,7 +31,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,15 +42,25 @@ import com.example.todo.screens.TodoForm
 import com.example.todo.ui.theme.TodoTheme
 import com.example.todo.viewmodels.TodosViewModel
 import com.example.todo.viewmodels.TodosViewModelFactory
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todo.screens.AddDogScreen
 
 
 class MainActivity : ComponentActivity() {
     private val todosViewModel: TodosViewModel by viewModels {
-        TodosViewModelFactory((application as TodoApplication).todoDAO,
+        TodosViewModelFactory(
+            (application as TodoApplication).todoDAO,
             (application as TodoApplication).dogDAO,
             (application as TodoApplication).tagDAO,
-            (application as TodoApplication).moodDAO)
+            (application as TodoApplication).moodDAO
+        )
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -82,15 +91,24 @@ fun MainScreen(todosViewModel: TodosViewModel) {
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                showTodoForm = true
-            }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Task")
+            Column {
+                FloatingActionButton(onClick = {
+                    showTodoForm = true
+                }) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add Task")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                // Add a button to navigate to the dog creation screen
+                FloatingActionButton(onClick = {
+                    navController.navigate("createDogScreen")
+                }) {
+                    Icon(Icons.Filled.Pets, contentDescription = "Add Dog")
+                }
             }
         },
     ) { paddingValues ->
         if (showTodoForm) {
-            TodoForm(todosViewModel){
+            TodoForm(todosViewModel) {
                 showTodoForm = false
             }
         } else {
@@ -102,6 +120,11 @@ fun MainScreen(todosViewModel: TodosViewModel) {
                         todosViewModel.loadCompletedTasks()
                     }
                     CompletedTasksHistoryScreen(todosViewModel)
+                }
+                composable("createDogScreen") {
+                    AddDogScreen(todosViewModel, navController = navController) { addedDog ->
+                        println("New dog added: ${addedDog.name}")
+                    }
                 }
             }
         }

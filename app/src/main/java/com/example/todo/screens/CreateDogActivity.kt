@@ -1,4 +1,4 @@
-package com.example.tailtasks.screens
+package com.example.todo.screens
 
 import android.app.DatePickerDialog
 import android.content.Context
@@ -47,6 +47,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.todo.data.TodoDatabase
 import com.example.todo.entities.DogEntity
 import kotlinx.coroutines.launch
@@ -54,9 +56,14 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import com.example.todo.viewmodels.TodosViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddDogScreen(onDogAdded: (DogEntity) -> Unit) {
+fun AddDogScreen(
+    viewModel: TodosViewModel,
+    navController: NavController,
+    onDogAdded: (DogEntity) -> Unit // Add this parameter
+)  {
     var name by remember { mutableStateOf("") }
     var breed by remember { mutableStateOf("") }
     var birthday by remember { mutableStateOf(Date()) }
@@ -134,9 +141,10 @@ fun AddDogScreen(onDogAdded: (DogEntity) -> Unit) {
                     deleted = false,
                     id = 0
                 )
-                insertOnClick(dog)
+                viewModel.createDog(dog)
+                navController.popBackStack()
                 onDogAdded(dog)
-            },
+                      },
             modifier = Modifier.align(Alignment.End)
         ) {
             Text(text = "Create Dog")
