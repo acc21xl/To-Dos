@@ -44,6 +44,7 @@ import com.example.todo.viewmodels.TodosViewModel
 import com.example.todo.viewmodels.TodosViewModelFactory
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -95,6 +96,12 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
                 IconButton(onClick = { navController.navigate("history") }) {
                     Icon(Icons.Filled.History, contentDescription = "Completed Tasks")
                 }
+                IconButton(onClick = { navController.navigate("tasks") }) {
+                    Icon(Icons.Filled.Checklist, contentDescription = "Task List")
+                }
+                IconButton(onClick = { navController.navigate("createDogScreen") }) {
+                    Icon(Icons.Filled.Pets, contentDescription = "Add Dog")
+                }
             }
         },
         floatingActionButton = {
@@ -103,12 +110,6 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
                     showTodoForm = true
                 }) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Task")
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                FloatingActionButton(onClick = {
-                    navController.navigate("createDogScreen")
-                }) {
-                    Icon(Icons.Filled.Pets, contentDescription = "Add Dog")
                 }
             }
         },
