@@ -40,6 +40,9 @@ interface TodoDAO {
     @Query("SELECT * FROM tags WHERE title = :name")
     suspend fun getTagByName(name: String): TagEntity?
 
+//    @Query("SELECT toCompleteByDate FROM todos")
+//    fun getDateToCompleter() : Flow<List<TodoEntity>>
+
     @Transaction
     suspend fun insertNewTodoWithTags(newTodo: TodoEntity, tags: List<TagEntity>) {
         val newTodoId = insert(newTodo)
@@ -48,4 +51,6 @@ interface TodoDAO {
             insertTodoTagJoin(TodoTagJoin(newTodoId, tagId.toLong()))
         }
     }
+
+
 }

@@ -13,8 +13,10 @@ import com.example.todo.entities.DogEntity
 import com.example.todo.entities.MoodEntity
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -81,5 +83,16 @@ class TodosViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
             loadTasks()
         }
     }
+
+//    class TodoRepository(private val todoDAO: TodoDAO) {
+//        fun getNextTodoTime(): Flow<List<TodoEntity>> {
+//            val todos = todoDAO.getAllTodos()
+//            val dates = todoDAO.getDateToCompleter()
+//            val currentTime = System.currentTimeMillis()
+//            return dates
+//
+//        }
+//    }
+
 }
 

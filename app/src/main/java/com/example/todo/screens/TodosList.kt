@@ -67,6 +67,7 @@ import androidx.core.content.ContextCompat
 import com.example.tailtasks.enums.MoodScore
 import com.example.tailtasks.enums.Priority
 import com.example.tailtasks.enums.Status
+import com.example.todo.MyNotification
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
 import com.example.todo.enums.RepeatFrequency
@@ -76,6 +77,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import androidx.compose.ui.platform.LocalContext
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,6 +96,7 @@ fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
     var repeatFrequency by remember { mutableStateOf(RepeatFrequency.Daily) }
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         BannerImagePicker(imageBitmap) { newBitmap ->
@@ -217,11 +222,15 @@ fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
                             imageBytes = imageBytes
                         )
 
+
                         viewModel.submitTodo(newTodo, selectedTags)
                         onClose()
                     } else {
                         // Show error message for invalid input
                     }
+                    val myNotification = MyNotification(context,title,description)
+                    val time = toCompleteByDate.time
+                    myNotification.scheduleNotification(timeInMillis = time)
                 }) {
                     Text("Submit Todo")
                 }
@@ -382,8 +391,11 @@ fun DateInput(label: String, date: Date?, onDateChanged: (Date) -> Unit) {
         onValueChange = {},
         readOnly = true,
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth()
-            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) {
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }) {
                 DatePickerDialog(
                     context,
                     { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
