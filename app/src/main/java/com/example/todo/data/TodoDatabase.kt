@@ -12,7 +12,7 @@ import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
 import com.example.todo.entities.TodoTagJoin
 
-@Database(entities = [TodoEntity::class, DogEntity::class, TagEntity::class, MoodEntity::class, TodoTagJoin::class], version = 4, exportSchema = false)
+@Database(entities = [TodoEntity::class, DogEntity::class, TagEntity::class, MoodEntity::class, TodoTagJoin::class], version = 6, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class TodoDatabase : RoomDatabase() {
     abstract fun todoDAO(): TodoDAO

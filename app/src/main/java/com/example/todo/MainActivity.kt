@@ -34,8 +34,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.platform.LocalContext
+
+
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
@@ -50,19 +52,40 @@ import com.example.todo.screens.TodoForm
 import com.example.todo.ui.theme.TodoTheme
 import com.example.todo.viewmodels.TodosViewModel
 import com.example.todo.viewmodels.TodosViewModelFactory
+
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.filled.Checklist
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todo.screens.AddDogScreen
+import com.example.todo.viewmodels.DogViewModel
+import com.example.todo.viewmodels.DogViewModelFactory
+
+
 
 class MainActivity : ComponentActivity() {
     private val todosViewModel: TodosViewModel by viewModels {
-        TodosViewModelFactory((application as TodoApplication).todoDAO,
+        TodosViewModelFactory(
+            (application as TodoApplication).todoDAO,
             (application as TodoApplication).dogDAO,
             (application as TodoApplication).tagDAO,
-            (application as TodoApplication).moodDAO)
+            (application as TodoApplication).moodDAO
+        )
     }
+    private val dogViewmodel: DogViewModel by viewModels {
+        DogViewModelFactory(
+            (application as TodoApplication).dogDAO
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -71,7 +94,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(todosViewModel)
+                    MainScreen(todosViewModel, dogViewmodel)
                 }
             }
         }
@@ -83,7 +106,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(todosViewModel: TodosViewModel) {
+fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
     val navController = rememberNavController()
     var showTodoForm by remember { mutableStateOf(false) }
 
@@ -93,18 +116,26 @@ fun MainScreen(todosViewModel: TodosViewModel) {
                 IconButton(onClick = { navController.navigate("history") }) {
                     Icon(Icons.Filled.History, contentDescription = "Completed Tasks")
                 }
+                IconButton(onClick = { navController.navigate("tasks") }) {
+                    Icon(Icons.Filled.Checklist, contentDescription = "Task List")
+                }
+                IconButton(onClick = { navController.navigate("createDogScreen") }) {
+                    Icon(Icons.Filled.Pets, contentDescription = "Add Dog")
+                }
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                showTodoForm = true
-            }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Task")
+            Column {
+                FloatingActionButton(onClick = {
+                    showTodoForm = true
+                }) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add Task")
+                }
             }
         },
     ) { paddingValues ->
         if (showTodoForm) {
-            TodoForm(todosViewModel){
+            TodoForm(todosViewModel) {
                 showTodoForm = false
             }
         } else {
@@ -116,6 +147,11 @@ fun MainScreen(todosViewModel: TodosViewModel) {
                         todosViewModel.loadCompletedTasks()
                     }
                     CompletedTasksHistoryScreen(todosViewModel)
+                }
+                composable("createDogScreen") {
+                    AddDogScreen(dogViewModel, navController = navController) { addedDog ->
+                        println("New dog added: ${addedDog.name}")
+                    }
                 }
             }
         }
