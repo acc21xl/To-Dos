@@ -49,6 +49,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo.screens.AddDogScreen
+import com.example.todo.viewmodels.DogViewModel
+import com.example.todo.viewmodels.DogViewModelFactory
 
 
 class MainActivity : ComponentActivity() {
@@ -60,6 +62,11 @@ class MainActivity : ComponentActivity() {
             (application as TodoApplication).moodDAO
         )
     }
+    private val dogViewmodel: DogViewModel by viewModels {
+        DogViewModelFactory(
+            (application as TodoApplication).dogDAO
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +76,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(todosViewModel)
+                    MainScreen(todosViewModel, dogViewmodel)
                 }
             }
         }
@@ -78,7 +85,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(todosViewModel: TodosViewModel) {
+fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
     val navController = rememberNavController()
     var showTodoForm by remember { mutableStateOf(false) }
 
@@ -98,7 +105,6 @@ fun MainScreen(todosViewModel: TodosViewModel) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Task")
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                // Add a button to navigate to the dog creation screen
                 FloatingActionButton(onClick = {
                     navController.navigate("createDogScreen")
                 }) {
@@ -122,7 +128,7 @@ fun MainScreen(todosViewModel: TodosViewModel) {
                     CompletedTasksHistoryScreen(todosViewModel)
                 }
                 composable("createDogScreen") {
-                    AddDogScreen(todosViewModel, navController = navController) { addedDog ->
+                    AddDogScreen(dogViewModel, navController = navController) { addedDog ->
                         println("New dog added: ${addedDog.name}")
                     }
                 }

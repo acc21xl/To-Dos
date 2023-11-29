@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DogDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(dog: DogEntity)
+    suspend fun insert(dog: DogEntity): Long
     @Update
     suspend fun update(dog: DogEntity)
     @Delete
