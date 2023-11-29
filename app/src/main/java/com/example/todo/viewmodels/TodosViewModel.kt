@@ -2,27 +2,19 @@ package com.example.todo.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tailtasks.enums.MoodScore
-import com.example.tailtasks.enums.Priority
-import com.example.tailtasks.enums.Status
 import com.example.todo.data.DogDAO
-import com.example.todo.data.MoodDAO
 import com.example.todo.data.TagDAO
 import com.example.todo.data.TodoDAO
 import com.example.todo.entities.DogEntity
-import com.example.todo.entities.MoodEntity
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.Date
 
 class TodosViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
-                     private val tagDAO: TagDAO, private val moodDAO: MoodDAO) : ViewModel() {
+                     private val tagDAO: TagDAO) : ViewModel() {
     private val _tasks = MutableStateFlow<List<TodoEntity>>(emptyList())
     val dog = MutableStateFlow<DogEntity?>(null)
     val tasks = _tasks.asStateFlow()

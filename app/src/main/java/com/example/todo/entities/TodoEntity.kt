@@ -10,8 +10,7 @@ import java.util.Date
 @Entity(
     tableName = TodoEntity.TABLE_NAME,
     foreignKeys = [
-        //ForeignKey(entity = DogEntity::class, parentColumns = ["id"], childColumns = ["dogId"]),
-        ForeignKey(entity = MoodEntity::class, parentColumns = ["id"], childColumns = ["moodId"])
+        //ForeignKey(entity = DogEntity::class, parentColumns = ["id"], childColumns = ["dogId"])
     ]
 )
 data class TodoEntity(
@@ -30,7 +29,7 @@ data class TodoEntity(
     val toCompleteByDate: Date,
     val completionDate: Date?,
     val dogId: Int,
-    val moodId: Int?,
+    val moodScore: Int?,
     val repeat: Boolean,
     val repeatFrequency: Int,
     val deleted: Boolean

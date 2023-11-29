@@ -1,6 +1,5 @@
 package com.example.todo.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -39,9 +38,6 @@ interface TodoDAO {
 
     @Query("SELECT * FROM tags WHERE title = :name")
     suspend fun getTagByName(name: String): TagEntity?
-
-//    @Query("SELECT toCompleteByDate FROM todos")
-//    fun getDateToCompleter() : Flow<List<TodoEntity>>
 
     @Transaction
     suspend fun insertNewTodoWithTags(newTodo: TodoEntity, tags: List<TagEntity>) {

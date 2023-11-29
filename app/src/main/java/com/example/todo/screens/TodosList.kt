@@ -206,7 +206,7 @@ fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
                             title = title,
                             description = description,
                             dogId = 0, // Filled out later
-                            moodId = null,
+                            moodScore = null,
                             priority = priority,
                             status = Status.ONGOING,
                             repeat = repeat,
@@ -276,24 +276,6 @@ fun Chip(tag: String, onRemove: () -> Unit) {
     }
 }
 
-@Composable
-fun MoodSelector(onMoodSelected: (MoodScore) -> Unit) {
-    var sliderPosition by remember { mutableStateOf(3f) } // Default to NEUTRAL
-    val moodScore = getMoodFromSliderPosition(sliderPosition.toInt())
-
-    Column {
-        Text("Select Mood: ${moodScore.name}")
-        Slider(
-            value = sliderPosition,
-            onValueChange = { sliderPosition = it },
-            onValueChangeFinished = {
-                onMoodSelected(moodScore)
-            },
-            valueRange = 1f..5f,
-            steps = 3
-        )
-    }
-}
 
 @Composable
 fun DropdownPriority(selectedPriority: Priority, onPrioritySelected: (Priority) -> Unit) {
@@ -351,16 +333,7 @@ fun DropdownStatus(selectedStatus: Status, onStatusSelected: (Status) -> Unit) {
 }
 
 
-fun getMoodFromSliderPosition(position: Int): MoodScore {
-    return when (position) {
-        1 -> MoodScore.UPSET
-        2 -> MoodScore.SAD
-        3 -> MoodScore.NEUTRAL
-        4 -> MoodScore.HAPPY
-        5 -> MoodScore.EXCELLENT
-        else -> MoodScore.NEUTRAL
-    }
-}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

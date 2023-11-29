@@ -7,18 +7,16 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.todo.converters.Converters
 import com.example.todo.entities.DogEntity
-import com.example.todo.entities.MoodEntity
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
 import com.example.todo.entities.TodoTagJoin
 
-@Database(entities = [TodoEntity::class, DogEntity::class, TagEntity::class, MoodEntity::class, TodoTagJoin::class], version = 6, exportSchema = false)
+@Database(entities = [TodoEntity::class, DogEntity::class, TagEntity::class, TodoTagJoin::class], version = 8, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class TodoDatabase : RoomDatabase() {
     abstract fun todoDAO(): TodoDAO
     abstract fun dogDAO(): DogDAO
     abstract fun tagDAO(): TagDAO
-    abstract fun moodDAO(): MoodDAO
 
     companion object {
         private const val DB_NAME = "todo_db"

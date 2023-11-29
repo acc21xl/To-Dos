@@ -7,7 +7,6 @@ class TodoApplication : Application() {
     val todoDatabase by lazy { TodoDatabase.getInstance(this) }
     val todoDAO by lazy { todoDatabase.todoDAO() }
     val dogDAO by lazy { todoDatabase.dogDAO() }
-    val moodDAO by lazy { todoDatabase.moodDAO() }
     val tagDAO by lazy { todoDatabase.tagDAO() }
 }
 
