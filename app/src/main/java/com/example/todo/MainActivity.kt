@@ -44,6 +44,7 @@ import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.ui.Modifier
 import com.example.todo.screens.AddDogScreen
+import com.example.todo.screens.DogDetailsScreen
 import com.example.todo.viewmodels.DogViewModel
 import com.example.todo.viewmodels.DogViewModelFactory
 
@@ -96,8 +97,16 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
                 IconButton(onClick = { navController.navigate("tasks") }) {
                     Icon(Icons.Filled.Checklist, contentDescription = "Task List")
                 }
-                IconButton(onClick = { navController.navigate("createDogScreen") }) {
-                    Icon(Icons.Filled.Pets, contentDescription = "Add Dog")
+                IconButton(onClick = {
+                    if (dogViewModel.dog.value != null) {
+                        // Navigate to DogDetailsScreen if there is a dog
+                        navController.navigate("dogDetails")
+                    } else {
+                        // Navigate to createDogScreen if there is no dog
+                        navController.navigate("createDogScreen")
+                    }
+                }) {
+                    Icon(Icons.Filled.Pets, contentDescription = "Dog")
                 }
             }
         },
@@ -128,6 +137,10 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
                 composable("createDogScreen") {
                     AddDogScreen(dogViewModel, navController = navController) { addedDog ->
                         println("New dog added: ${addedDog.name}")
+                    }
+                }
+                composable("dogDetails") {
+                    DogDetailsScreen(navController, dogViewModel) {
                     }
                 }
             }

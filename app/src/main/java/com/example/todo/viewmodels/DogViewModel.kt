@@ -43,5 +43,8 @@ class DogViewModel(private val dogDAO: DogDAO) : ViewModel() {
             dogDAO.delete(dog)
         }
     }
+    suspend fun getDog(): DogEntity? {
+        return dogDAO.getDog(0)
+    }
 
 }
