@@ -8,6 +8,7 @@ import com.example.todo.data.TodoDAO
 import com.example.todo.entities.DogEntity
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -67,6 +68,18 @@ class TodosViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
             val newTodoId = todoDAO.insertNewTodoWithTags(newTodo, tags)
             loadTasks()
         }
+    }
+    fun updateTodo(
+        todo: TodoEntity, tags: List<TagEntity>
+    ) {
+        viewModelScope.launch {
+            val newTodoId = todoDAO.updateTodoWithTags(todo, tags)
+            loadTasks()
+        }
+    }
+
+    fun getTagsForTodo(todoId: Long): Flow<List<TagEntity>> {
+        return todoDAO.getTagsForTodo(todoId)
     }
 
     fun updateTask(task: TodoEntity) {

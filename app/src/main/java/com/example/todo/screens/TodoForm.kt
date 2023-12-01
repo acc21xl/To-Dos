@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.DatePickerDialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.widget.DatePicker
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,13 +42,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -64,7 +64,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.example.tailtasks.enums.MoodScore
 import com.example.tailtasks.enums.Priority
 import com.example.tailtasks.enums.Status
 import com.example.todo.MyNotification
@@ -77,25 +76,33 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import androidx.compose.ui.platform.LocalContext
-
+import java.io.ByteArrayInputStream
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+fun TodoForm(
+    viewModel: TodosViewModel,
+    onClose: () -> Unit,
+    existingTodo: TodoEntity? = null
+) {
+    var title by remember { mutableStateOf(existingTodo?.title ?: "") }
+    var description by remember { mutableStateOf(existingTodo?.description ?: "") }
+    val existingTags by viewModel.getTagsForTodo(existingTodo?.id?.toLong() ?: -1).collectAsState(initial = emptyList())
     val selectedTags = remember { mutableStateListOf<TagEntity>() }
-    var priority by remember { mutableStateOf(Priority.LOW) }
-    var repeat by remember { mutableStateOf(false) }
-    var latitude by remember { mutableStateOf(0.0) }
-    var longitude by remember { mutableStateOf(0.0) }
-    var distance by remember { mutableStateOf(0.0) }
-    var toCompleteByDate by remember { mutableStateOf(Date()) }
-    var repeatFrequency by remember { mutableStateOf(RepeatFrequency.Daily) }
-    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
+    LaunchedEffect(existingTags) {
+        selectedTags.clear()
+        selectedTags.addAll(existingTags)
+    }
+    var priority by remember { mutableStateOf( existingTodo?.priority ?: Priority.LOW) }
+    var repeat by remember { mutableStateOf( existingTodo?.repeat ?: false) }
+    var latitude by remember { mutableStateOf( existingTodo?.latitude ?: 0.0) }
+    var longitude by remember { mutableStateOf( existingTodo?.longitude ?: 0.0) }
+    var distance by remember { mutableStateOf( existingTodo?.distance ?: 0.0) }
+    var toCompleteByDate by remember { mutableStateOf( existingTodo?.toCompleteByDate ?: Date()) }
+    var repeatFrequency by remember { mutableStateOf<RepeatFrequency>(RepeatFrequency.fromInt(existingTodo?.repeatFrequency ?: 0) ?: RepeatFrequency.Daily) }
+    var imageBitmap by remember { mutableStateOf<Bitmap?>( null) }
+    var imageBytes by remember { mutableStateOf<ByteArray?>(existingTodo?.imageBytes ?: null) }
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -203,6 +210,7 @@ fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
                 Button(onClick = {
                     if (validateTodoInput(title, description)) {
                         val newTodo = TodoEntity(
+                            id = existingTodo?.id ?: 0,
                             title = title,
                             description = description,
                             dogId = 0, // Filled out later
@@ -222,8 +230,12 @@ fun TodoForm(viewModel: TodosViewModel, onClose: () -> Unit) {
                             imageBytes = imageBytes
                         )
 
+                        if (existingTodo != null) {
+                            viewModel.updateTodo(newTodo, selectedTags)
+                        } else {
+                            viewModel.submitTodo(newTodo, selectedTags)
+                        }
 
-                        viewModel.submitTodo(newTodo, selectedTags)
                         onClose()
                     } else {
                         // Show error message for invalid input
@@ -305,32 +317,32 @@ fun DropdownPriority(selectedPriority: Priority, onPrioritySelected: (Priority) 
 }
 
 
-@Composable
-fun DropdownStatus(selectedStatus: Status, onStatusSelected: (Status) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(selectedStatus.name) }
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text("Status:", modifier = Modifier.padding(end = 8.dp))
-        TextButton(onClick = { expanded = true }) {
-            Text(selectedText)
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            Status.values().forEach { status ->
-                DropdownMenuItem(text = {
-                    Text(status.name)
-                }, onClick = {
-                    selectedText = status.name
-                    onStatusSelected(status)
-                    expanded = false
-                })
-            }
-        }
-    }
-}
+//@Composable
+//fun DropdownStatus(selectedStatus: Status, onStatusSelected: (Status) -> Unit) {
+//    var expanded by remember { mutableStateOf(false) }
+//    var selectedText by remember { mutableStateOf(selectedStatus.name) }
+//
+//    Row(verticalAlignment = Alignment.CenterVertically) {
+//        Text("Status:", modifier = Modifier.padding(end = 8.dp))
+//        TextButton(onClick = { expanded = true }) {
+//            Text(selectedText)
+//        }
+//        DropdownMenu(
+//            expanded = expanded,
+//            onDismissRequest = { expanded = false }
+//        ) {
+//            Status.values().forEach { status ->
+//                DropdownMenuItem(text = {
+//                    Text(status.name)
+//                }, onClick = {
+//                    selectedText = status.name
+//                    onStatusSelected(status)
+//                    expanded = false
+//                })
+//            }
+//        }
+//    }
+//}
 
 
 
@@ -386,7 +398,7 @@ fun DateInput(label: String, date: Date?, onDateChanged: (Date) -> Unit) {
 @Composable
 fun RepeatFrequencySelector(selectedFrequency: RepeatFrequency, onFrequencySelected: (RepeatFrequency) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(selectedFrequency.displayName) }
+    var selectedText by remember { mutableStateOf(selectedFrequency.name) }
 
     Column {
         TextButton(onClick = { expanded = true }) {
@@ -398,9 +410,9 @@ fun RepeatFrequencySelector(selectedFrequency: RepeatFrequency, onFrequencySelec
         ) {
             RepeatFrequency.values().forEach { frequency ->
                 DropdownMenuItem(text = {
-                    Text(frequency.displayName)
+                    Text(frequency.name)
                 }, onClick = {
-                    selectedText = frequency.displayName
+                    selectedText = frequency.name
                     onFrequencySelected(frequency)
                     expanded = false
                 })
@@ -469,12 +481,16 @@ fun BannerImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
     }
 }
 
-fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+fun bitmapToByteArray(bitmap: Bitmap?): ByteArray {
     val stream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
     return stream.toByteArray()
 }
 
+fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
+    val inputStream = ByteArrayInputStream(byteArray)
+    return BitmapFactory.decodeStream(inputStream)
+}
 
 fun validateTodoInput(
     title: String,

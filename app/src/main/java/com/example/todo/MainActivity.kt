@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +48,14 @@ import com.example.todo.screens.AddDogScreen
 import com.example.todo.screens.DogDetailsScreen
 import com.example.todo.viewmodels.DogViewModel
 import com.example.todo.viewmodels.DogViewModelFactory
-
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.ui.window.Dialog
 
 
 class MainActivity : ComponentActivity() {
@@ -121,9 +129,10 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
         },
     ) { paddingValues ->
         if (showTodoForm) {
-            TodoForm(todosViewModel) {
-                showTodoForm = false
-            }
+            TodoForm(
+                viewModel = todosViewModel,
+                onClose = { showTodoForm = false }
+            )
         } else {
             NavHost(navController, startDestination = "tasks", modifier = Modifier.padding(paddingValues)) {
                 composable("tasks") { ActiveTasksScreen(todosViewModel) }
@@ -148,35 +157,35 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskRow(
     task: TodoEntity,
     onTaskCheckedChange: (Boolean) -> Unit,
-    onTaskTextChange: (String) -> Unit,
-
+    onTaskClicked: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 8.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            ) {
-            Checkbox(
-                checked = task.isCompleted,
-                onCheckedChange = onTaskCheckedChange
-            )
-            TextField(
-                value = task.title,
-                onValueChange = onTaskTextChange,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp),
-                singleLine = true,
-                placeholder = { Text("Enter task here")}
-            )
-
+        Checkbox(
+            checked = task.isCompleted,
+            onCheckedChange = onTaskCheckedChange
+        )
+        Text(
+            text = task.title,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 8.dp)
+        )
+        IconButton(onClick = { onTaskClicked() }) {
+            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
         }
-
-
+        Icon(imageVector = Icons.Default.Visibility, contentDescription = "View")
+    }
 }
+
+
 
 
 

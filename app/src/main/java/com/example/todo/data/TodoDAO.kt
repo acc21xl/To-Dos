@@ -48,5 +48,21 @@ interface TodoDAO {
         }
     }
 
+    @Transaction
+    suspend fun updateTodoWithTags(todo: TodoEntity, tags: List<TagEntity>) {
+        update(todo)
 
+        deleteTodoTags(todo.id.toLong())
+
+        tags.forEach { tag ->
+            val tagId = getTagByName(tag.title)?.id ?: insertTag(tag)
+            insertTodoTagJoin(TodoTagJoin(todo.id.toLong(), tagId.toLong()))
+        }
+    }
+
+    @Query("SELECT tags.* FROM tags JOIN todo_tag_join ON tags.id = todo_tag_join.tagId WHERE todo_tag_join.todoId = :todoId")
+    fun getTagsForTodo(todoId: Long): Flow<List<TagEntity>>
+
+    @Query("DELETE FROM todo_tag_join WHERE todoId = :todoId")
+    suspend fun deleteTodoTags(todoId: Long)
 }
