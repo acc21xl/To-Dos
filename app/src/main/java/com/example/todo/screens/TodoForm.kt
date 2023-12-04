@@ -100,8 +100,11 @@ fun TodoForm(
     var longitude by remember { mutableDoubleStateOf( existingTodo?.longitude ?: 0.0) }
     var distance by remember { mutableDoubleStateOf( existingTodo?.distance ?: 0.0) }
     var toCompleteByDate by remember { mutableStateOf( existingTodo?.toCompleteByDate ?: Date()) }
-    var imageBitmap by remember { mutableStateOf<Bitmap?>( null) }
     var imageBytes by remember { mutableStateOf(existingTodo?.imageBytes) }
+    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(existingTodo) {
+        imageBitmap = existingTodo?.imageBytes?.let { byteArrayToBitmap(it) }
+    }
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
