@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.tailtasks.enums.MoodScore
+import com.example.todo.enums.MoodScore
 import com.example.todo.TaskRow
 import com.example.todo.entities.TodoEntity
 import com.example.todo.viewmodels.TodosViewModel

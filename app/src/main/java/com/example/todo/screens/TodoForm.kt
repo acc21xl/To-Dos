@@ -35,7 +35,6 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,12 +64,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.example.tailtasks.enums.Priority
-import com.example.tailtasks.enums.Status
+import com.example.todo.enums.Priority
+import com.example.todo.enums.Status
 import com.example.todo.MyNotification
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
-import com.example.todo.enums.RepeatFrequency
 import com.example.todo.viewmodels.TodosViewModel
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -97,14 +96,12 @@ fun TodoForm(
         selectedTags.addAll(existingTags)
     }
     var priority by remember { mutableStateOf( existingTodo?.priority ?: Priority.LOW) }
-    var repeat by remember { mutableStateOf( existingTodo?.repeat ?: false) }
-    var latitude by remember { mutableStateOf( existingTodo?.latitude ?: 0.0) }
-    var longitude by remember { mutableStateOf( existingTodo?.longitude ?: 0.0) }
-    var distance by remember { mutableStateOf( existingTodo?.distance ?: 0.0) }
+    var latitude by remember { mutableDoubleStateOf( existingTodo?.latitude ?: 0.0) }
+    var longitude by remember { mutableDoubleStateOf( existingTodo?.longitude ?: 0.0) }
+    var distance by remember { mutableDoubleStateOf( existingTodo?.distance ?: 0.0) }
     var toCompleteByDate by remember { mutableStateOf( existingTodo?.toCompleteByDate ?: Date()) }
-    var repeatFrequency by remember { mutableStateOf<RepeatFrequency>(RepeatFrequency.fromInt(existingTodo?.repeatFrequency ?: 0) ?: RepeatFrequency.Daily) }
     var imageBitmap by remember { mutableStateOf<Bitmap?>( null) }
-    var imageBytes by remember { mutableStateOf<ByteArray?>(existingTodo?.imageBytes ?: null) }
+    var imageBytes by remember { mutableStateOf(existingTodo?.imageBytes) }
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -143,29 +140,13 @@ fun TodoForm(
             }
             Spacer(Modifier.height(8.dp))
 
-            TagInput(viewModel, selectedTags)
+            TagInput(selectedTags)
             Spacer(Modifier.height(8.dp))
 
 
-            // Dropdowns or selectors for Priority and Status
+            // Dropdowns or selectors for Priority
             DropdownPriority(priority) { priority = it }
 
-            // Repeat Checkbox and Frequency Selector
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = repeat,
-                    onCheckedChange = { repeat = it }
-                )
-                Text("Repeat")
-            }
-
-            // Show Repeat Frequency Selector if repeat is true
-            if (repeat) {
-                RepeatFrequencySelector(
-                    selectedFrequency = repeatFrequency,
-                    onFrequencySelected = { repeatFrequency = it }
-                )
-            }
             Spacer(Modifier.height(8.dp))
 
             BoxWithConstraints {
@@ -219,8 +200,6 @@ fun TodoForm(
                             moodScore = null,
                             priority = priority,
                             status = Status.ONGOING,
-                            repeat = repeat,
-                            repeatFrequency = repeatFrequency.ordinal,
                             latitude = latitude,
                             longitude = longitude,
                             distance = distance,
@@ -255,7 +234,7 @@ fun TodoForm(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun TagInput(viewModel: TodosViewModel, selectedTags: MutableList<TagEntity>) {
+fun TagInput(selectedTags: MutableList<TagEntity>) {
     var text by remember { mutableStateOf("") }
 
     Column {
@@ -367,32 +346,6 @@ fun DateInput(label: String, date: Date?, onDateChanged: (Date) -> Unit) {
                 ).show()
             }
     )
-}
-
-@Composable
-fun RepeatFrequencySelector(selectedFrequency: RepeatFrequency, onFrequencySelected: (RepeatFrequency) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(selectedFrequency.name) }
-
-    Column {
-        TextButton(onClick = { expanded = true }) {
-            Text(selectedText)
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            RepeatFrequency.values().forEach { frequency ->
-                DropdownMenuItem(text = {
-                    Text(frequency.name)
-                }, onClick = {
-                    selectedText = frequency.name
-                    onFrequencySelected(frequency)
-                    expanded = false
-                })
-            }
-        }
-    }
 }
 
 @Composable

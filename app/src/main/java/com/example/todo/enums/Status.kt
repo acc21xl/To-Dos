@@ -1,4 +1,4 @@
-package com.example.tailtasks.enums
+package com.example.todo.enums
 
 enum class Status {
     PENDING, COMPLETED, ARCHIVED, ONGOING
