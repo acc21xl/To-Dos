@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,12 +50,10 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.EventRepeat
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.ui.window.Dialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import com.example.todo.screens.TypicalTodosScreen
 
 
@@ -179,26 +175,35 @@ fun TaskRow(
     onTaskClicked: () -> Unit,
     onVisibilityClicked: () -> Unit
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 8.dp)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Checkbox(
-            checked = task.isCompleted,
-            onCheckedChange = onTaskCheckedChange
-        )
-        Text(
-            text = task.title,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp)
-        )
-        IconButton(onClick = { onTaskClicked() }) {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
-        }
-        IconButton(onClick = onVisibilityClicked) {
-            Icon(imageVector = Icons.Default.Visibility, contentDescription = "View")
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Checkbox(
+                checked = task.isCompleted,
+                onCheckedChange = onTaskCheckedChange
+            )
+            Text(
+                text = task.title,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
+            )
+            IconButton(onClick = onTaskClicked) {
+                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
+            }
+            IconButton(onClick = onVisibilityClicked) {
+                Icon(imageVector = Icons.Default.Visibility, contentDescription = "View")
+            }
         }
     }
 }

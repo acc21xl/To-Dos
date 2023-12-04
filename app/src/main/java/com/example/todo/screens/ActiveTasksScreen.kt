@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -25,6 +26,8 @@ import com.example.todo.enums.MoodScore
 import com.example.todo.viewmodels.TodosViewModel
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +52,12 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
     val tasksGroupedByPriority = activeTasks.groupBy { it.priority }.toSortedMap(reverseOrder())
     val highestPriority = tasksGroupedByPriority.keys.firstOrNull()
 
-
+    Column {
+        Text(
+            "Current Tasks",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(8.dp)
+        )
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         tasksGroupedByPriority.forEach { (priority, tasks) ->
             item {
@@ -77,6 +85,7 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
             }
         }
     }
+    }
 
     if (showMoodDialog) {
         MoodSelectorDialog(
@@ -98,9 +107,15 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
     if (showTodoFormDialog) {
         Dialog(onDismissRequest = { showTodoFormDialog = false }) {
             currentTask?.let {
-                Box(
+                Card(
                     modifier = Modifier
-                        .background(Color.White)
+                        .fillMaxWidth()
+                        .wrapContentHeight(align = Alignment.Top)
+                        .padding(vertical = 16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
                 ) {
                     TodoForm(
                         viewModel = todosViewModel,
@@ -115,9 +130,16 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
     if (showTodoDisplayDialog) {
         Dialog(onDismissRequest = { showTodoDisplayDialog = false }) {
             currentTask?.let {
-                Box(
+
+                Card(
                     modifier = Modifier
-                        .background(Color.White)
+                        .fillMaxWidth()
+                        .wrapContentHeight(align = Alignment.Top)
+                        .padding(vertical = 16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
                 ) {
                     TodoDisplay(
                         viewModel = todosViewModel,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -31,29 +32,39 @@ fun TodoDisplay(
     val imageBitmap = todo.imageBytes?.let { byteArrayToBitmap(it) }
     val tags = viewModel.getTagsForTodo(todo.id.toLong())
     val tagsAsState by tags.collectAsState(initial = emptyList())
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
     ) {
         BannerImageDisplay(imageBitmap)
 
-        Text("${todo.title}", style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(8.dp))
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(todo.title, style = MaterialTheme.typography.headlineMedium)
+                Divider(Modifier.padding(vertical = 8.dp))
 
-        Text("Priority: ${todo.priority.name}", style = MaterialTheme.typography.bodyLarge)
-        Spacer(Modifier.height(8.dp))
+                Text("Priority: ${todo.priority.name}", style = MaterialTheme.typography.bodyLarge)
+                Divider(Modifier.padding(vertical = 8.dp))
 
-        Text("${todo.description}", style = MaterialTheme.typography.bodyMedium)
-        Spacer(Modifier.height(8.dp))
+                Text(todo.description, style = MaterialTheme.typography.bodyMedium)
+                Divider(Modifier.padding(vertical = 8.dp))
 
-        Text("To Complete By: ${todo.toCompleteByDate?.let { formatDate(it) }}", style = MaterialTheme.typography.bodyMedium)
-        Spacer(Modifier.height(8.dp))
+                Text(
+                    "To Complete By: ${formatDate(todo.toCompleteByDate)}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Divider(Modifier.padding(vertical = 8.dp))
 
-        Text("Tags: ${tagsAsState.joinToString { it.title }}", style = MaterialTheme.typography.bodyMedium)
-        Spacer(Modifier.height(8.dp))
+                Text(
+                    "Tags: ${tagsAsState.joinToString { it.title }}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Divider(Modifier.padding(vertical = 8.dp))
+
+                Text("Latitude: ${todo.latitude}", style = MaterialTheme.typography.bodyMedium)
+                Text("Longitude: ${todo.longitude}", style = MaterialTheme.typography.bodyMedium)
+                Text("Distance: ${todo.distance} meters", style = MaterialTheme.typography.bodyMedium)
+            }
     }
 }
 
