@@ -161,7 +161,8 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
 fun TaskRow(
     task: TodoEntity,
     onTaskCheckedChange: (Boolean) -> Unit,
-    onTaskClicked: () -> Unit
+    onTaskClicked: () -> Unit,
+    onVisibilityClicked: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -181,7 +182,9 @@ fun TaskRow(
         IconButton(onClick = { onTaskClicked() }) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
         }
-        Icon(imageVector = Icons.Default.Visibility, contentDescription = "View")
+        IconButton(onClick = onVisibilityClicked) {
+            Icon(imageVector = Icons.Default.Visibility, contentDescription = "View")
+        }
     }
 }
 

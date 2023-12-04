@@ -1,13 +1,19 @@
 package com.example.todo.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.tailtasks.enums.MoodScore
 import com.example.todo.TaskRow
@@ -20,6 +26,7 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
     val completedTasks by todosViewModel.completedTasks.collectAsState()
     var showMoodDialog by remember { mutableStateOf(false) }
     var showTodoFormDialog by remember { mutableStateOf(false) }
+    var showTodoDisplayDialog by remember { mutableStateOf(false) }
     var selectedMood by remember { mutableStateOf(MoodScore.NEUTRAL) }
     var currentTask by remember { mutableStateOf<TodoEntity?>(null) }
 
@@ -38,6 +45,10 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
                 onTaskClicked = {
                     currentTask = task
                     showTodoFormDialog = true
+                },
+                onVisibilityClicked = {
+                    currentTask = task
+                    showTodoDisplayDialog = true
                 }
             )
         }
@@ -68,6 +79,23 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
                     onClose = { showTodoFormDialog = false },
                     existingTodo = it
                 )
+            }
+        }
+    }
+
+    if (showTodoDisplayDialog) {
+        Dialog(onDismissRequest = { showTodoDisplayDialog = false }) {
+            currentTask?.let {
+                Box(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(16.dp)
+                ) {
+                    TodoDisplay(
+                        viewModel = todosViewModel,
+                        todo = it
+                    )
+                }
             }
         }
     }
