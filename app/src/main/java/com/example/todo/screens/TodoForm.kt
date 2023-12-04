@@ -84,10 +84,12 @@ import java.io.ByteArrayInputStream
 fun TodoForm(
     viewModel: TodosViewModel,
     onClose: () -> Unit,
-    existingTodo: TodoEntity? = null
+    existingTodo: TodoEntity? = null,
+    predefinedTitle: String = "",
+    predefinedDescription: String = ""
 ) {
-    var title by remember { mutableStateOf(existingTodo?.title ?: "") }
-    var description by remember { mutableStateOf(existingTodo?.description ?: "") }
+    var title by remember { mutableStateOf(existingTodo?.title ?: predefinedTitle) }
+    var description by remember { mutableStateOf(existingTodo?.description ?: predefinedDescription) }
     val existingTags by viewModel.getTagsForTodo(existingTodo?.id?.toLong() ?: -1).collectAsState(initial = emptyList())
     val selectedTags = remember { mutableStateListOf<TagEntity>() }
     LaunchedEffect(existingTags) {
@@ -315,34 +317,6 @@ fun DropdownPriority(selectedPriority: Priority, onPrioritySelected: (Priority) 
         }
     }
 }
-
-
-//@Composable
-//fun DropdownStatus(selectedStatus: Status, onStatusSelected: (Status) -> Unit) {
-//    var expanded by remember { mutableStateOf(false) }
-//    var selectedText by remember { mutableStateOf(selectedStatus.name) }
-//
-//    Row(verticalAlignment = Alignment.CenterVertically) {
-//        Text("Status:", modifier = Modifier.padding(end = 8.dp))
-//        TextButton(onClick = { expanded = true }) {
-//            Text(selectedText)
-//        }
-//        DropdownMenu(
-//            expanded = expanded,
-//            onDismissRequest = { expanded = false }
-//        ) {
-//            Status.values().forEach { status ->
-//                DropdownMenuItem(text = {
-//                    Text(status.name)
-//                }, onClick = {
-//                    selectedText = status.name
-//                    onStatusSelected(status)
-//                    expanded = false
-//                })
-//            }
-//        }
-//    }
-//}
 
 
 

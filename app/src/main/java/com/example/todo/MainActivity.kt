@@ -52,10 +52,13 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EventRepeat
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.ui.window.Dialog
+import com.example.todo.screens.TypicalTodosScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -99,22 +102,31 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
     Scaffold(
         bottomBar = {
             BottomAppBar {
-                IconButton(onClick = { navController.navigate("history") }) {
-                    Icon(Icons.Filled.History, contentDescription = "Completed Tasks")
-                }
-                IconButton(onClick = { navController.navigate("tasks") }) {
-                    Icon(Icons.Filled.Checklist, contentDescription = "Task List")
-                }
-                IconButton(onClick = {
-                    if (dogViewModel.dog.value != null) {
-                        // Navigate to DogDetailsScreen if there is a dog
-                        navController.navigate("dogDetails")
-                    } else {
-                        // Navigate to createDogScreen if there is no dog
-                        navController.navigate("createDogScreen")
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(onClick = {
+                        if (dogViewModel.dog.value != null) {
+                            // Navigate to DogDetailsScreen if there is a dog
+                            navController.navigate("dogDetails")
+                        } else {
+                            // Navigate to createDogScreen if there is no dog
+                            navController.navigate("createDogScreen")
+                        }
+                    }) {
+                        Icon(Icons.Filled.Pets, contentDescription = "Dog")
                     }
-                }) {
-                    Icon(Icons.Filled.Pets, contentDescription = "Dog")
+                    IconButton(onClick = { navController.navigate("tasks") }) {
+                        Icon(Icons.Filled.Checklist, contentDescription = "Task List")
+                    }
+                    IconButton(onClick = { navController.navigate("typicaltasks") }) {
+                        Icon(Icons.Filled.Repeat, contentDescription = "Typical Tasks")
+                    }
+                    IconButton(onClick = { navController.navigate("history") }) {
+                        Icon(Icons.Filled.History, contentDescription = "Completed Tasks")
+                    }
                 }
             }
         },
@@ -151,6 +163,9 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
                 composable("dogDetails") {
                     DogDetailsScreen(navController, dogViewModel) {
                     }
+                }
+                composable("typicaltasks") {
+                    TypicalTodosScreen(todosViewModel)
                 }
             }
         }

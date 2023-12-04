@@ -119,7 +119,6 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
                 Box(
                     modifier = Modifier
                         .background(Color.White)
-                        .padding(16.dp)
                 ) {
                     TodoDisplay(
                         viewModel = todosViewModel,
