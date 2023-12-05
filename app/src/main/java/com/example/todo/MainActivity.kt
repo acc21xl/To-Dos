@@ -72,14 +72,25 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             TodoTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
-                ) {
-                    MainScreen(todosViewModel, dogViewmodel)
+                ){
+                    // Display the appropriate screen based on the presence of dogs
+                    val navController = rememberNavController()
+                    val dog by dogViewmodel.dog.collectAsState()
+
+                    if (dog == null) {
+                        AddDogScreen(dogViewmodel, navController) { addedDog ->
+
+                        }
+                    } else {
+                        MainScreen(todosViewModel, dogViewmodel)
+                    }
                 }
             }
         }

@@ -66,6 +66,7 @@ import java.util.Locale
 import com.example.todo.viewmodels.TodosViewModel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import java.time.format.DateTimeFormatter
 
 fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
@@ -74,6 +75,7 @@ fun ByteArray.toBitmap(): Bitmap {
 @Composable
 fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBackClicked: () -> Unit) {
     val dog by viewModel.dog.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -83,11 +85,6 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
     ) {
         // Check if dog is not null before displaying details
         if (dog != null) {
-            // Display dog details using Text, Image, etc.
-            Text(text = "Dog Name: ${dog!!.name}")
-            Text(text = "Dog Breed: ${dog!!.breed}")
-            Text(text = "Dog Birthday: ${dog!!.birthdayDate}")
-            Text(text = "Dog Notes: ${dog!!.notes}")
             // Check if there are image bytes
             if (dog!!.imageBytes?.isNotEmpty() == true) {
                 // Convert image bytes to Bitmap
@@ -107,6 +104,19 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
                     )
                 }
             }
+            // Display dog details using Text, Image, etc.
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = " ${dog!!.name}")
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = "${dog!!.breed}")
+            Spacer(modifier = Modifier.height(30.dp))
+            fun dateFormat(date: Date?) = with(date ?: Date()) {
+                SimpleDateFormat("dd/MM/yyy").format(this)
+            }
+            var dogBirthday = dateFormat(dog!!.birthdayDate)
+            Text(text = dogBirthday)
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = " ${dog!!.notes}")
 
             Spacer(modifier = Modifier.height(16.dp))
         }
