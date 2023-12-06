@@ -86,11 +86,6 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
     ) {
         // Check if dog is not null before displaying details
         if (dog != null) {
-            // Display dog details using Text, Image, etc.
-            Text(text = "Dog Name: ${dog!!.name}")
-            Text(text = "Dog Breed: ${dog!!.breed}")
-            Text(text = "Dog Birthday: ${dog!!.birthdayDate}")
-            Text(text = "Dog Notes: ${dog!!.notes}")
             // Check if there are image bytes
             if (dog!!.imageBytes?.isNotEmpty() == true) {
                 // Convert image bytes to Bitmap
@@ -144,7 +139,6 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
                     confirmButton = {
                         Button(
                             onClick = {
-                                // Handle the confirmation action if needed
                                 showDialog = false
                             }
                         ) {

@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -66,7 +67,7 @@ fun AddDogScreen(
     var breed by remember { mutableStateOf(existingDog?.breed.orEmpty()) }
     var birthday by remember { mutableStateOf(existingDog?.birthdayDate ?: Date()) }
     var notes by remember { mutableStateOf(existingDog?.notes.orEmpty()) }
-    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var imageBitmap by remember { mutableStateOf<Bitmap?>(existingDog?.imageBytes?.asBitmap()) }
 
     // Use the provided existingDog details to initialize form fields
     LaunchedEffect(existingDog) {
@@ -75,7 +76,6 @@ fun AddDogScreen(
             breed = it.breed
             birthday = it.birthdayDate ?: Date()
             notes = it.notes
-            // You might need additional logic if you want to handle the image here
         }
     }
 
@@ -260,5 +260,13 @@ fun BirthdayPicker(
             month,
             day
         ).show()
+    }
+}
+// Convert ByteArray to Bitmap
+fun ByteArray?.asBitmap(): Bitmap? {
+    return if (this != null && isNotEmpty()) {
+        BitmapFactory.decodeByteArray(this, 0, size)
+    } else {
+        null
     }
 }
