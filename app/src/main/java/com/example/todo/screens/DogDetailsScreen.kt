@@ -66,6 +66,7 @@ import java.util.Locale
 import com.example.todo.viewmodels.TodosViewModel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.material3.AlertDialog
 import java.time.format.DateTimeFormatter
 
 fun ByteArray.toBitmap(): Bitmap {
@@ -124,6 +125,34 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
             Text(text = " ${dog!!.notes}")
 
             Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { showDialog = true }) {
+                Text(text = "Edit")
+            }
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text(text = "Edit Dog") },
+                    text = {
+                        // Show AddDogScreen in the dialog with the current dog details
+                        AddDogScreen(
+                            viewModel = viewModel,
+                            navController = navController,
+                            onDogAdded = { /* Handle added dog if needed */ },
+                            existingDog = dog
+                        )
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                // Handle the confirmation action if needed
+                                showDialog = false
+                            }
+                        ) {
+                            Text("Cancel Changes")
+                        }
+                    }
+                )
+            }
         }
 
     }

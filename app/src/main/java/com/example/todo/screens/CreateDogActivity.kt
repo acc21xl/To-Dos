@@ -31,31 +31,21 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import java.io.ByteArrayOutputStream
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.autoSaver
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.todo.data.TodoDatabase
 import com.example.todo.entities.DogEntity
 import com.example.todo.viewmodels.DogViewModel
 import kotlinx.coroutines.launch
@@ -63,19 +53,31 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import com.example.todo.viewmodels.TodosViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddDogScreen(
     viewModel: DogViewModel,
     navController: NavController,
-    onDogAdded: (DogEntity) -> Unit // Add this parameter
-)  {
-    var name by remember { mutableStateOf("") }
-    var breed by remember { mutableStateOf("") }
-    var birthday by remember { mutableStateOf(Date()) }
-    var notes by remember { mutableStateOf("") }
+    onDogAdded: ((DogEntity) -> Unit)?,
+    existingDog: DogEntity? = null
+) {
+    var name by remember { mutableStateOf(existingDog?.name.orEmpty()) }
+    var breed by remember { mutableStateOf(existingDog?.breed.orEmpty()) }
+    var birthday by remember { mutableStateOf(existingDog?.birthdayDate ?: Date()) }
+    var notes by remember { mutableStateOf(existingDog?.notes.orEmpty()) }
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    // Use the provided existingDog details to initialize form fields
+    LaunchedEffect(existingDog) {
+        existingDog?.let {
+            name = it.name
+            breed = it.breed
+            birthday = it.birthdayDate ?: Date()
+            notes = it.notes
+            // You might need additional logic if you want to handle the image here
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -123,11 +125,12 @@ fun AddDogScreen(
 
         val buttonScope = rememberCoroutineScope()
         //val dao = TodoDatabase.(LocalContext.current).dogDao()
-        fun insertOnClick(dog: DogEntity){
+        fun insertOnClick(dog: DogEntity) {
             buttonScope.launch {
                 //dao.insert(dog)
             }
         }
+
         Button(
             onClick = {
                 // Convert the Bitmap to ByteArray
@@ -146,13 +149,16 @@ fun AddDogScreen(
                     imageBytes = imageBytes,
                     deleted = false
                 )
-                viewModel.createDog(dog)
+
+                viewModel.createOrUpdateDog(dog)
                 navController.popBackStack()
-                onDogAdded(dog)
-                      },
+                if (onDogAdded != null) {
+                    onDogAdded(dog)
+                }
+            },
             modifier = Modifier.align(Alignment.End)
         ) {
-            Text(text = "Create Dog")
+            Text(text = "Confirm")
         }
     }
 }

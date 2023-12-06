@@ -55,6 +55,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import com.example.todo.screens.TypicalTodosScreen
+import com.example.todo.entities.DogEntity
 
 
 class MainActivity : ComponentActivity() {
@@ -85,9 +86,13 @@ class MainActivity : ComponentActivity() {
                     val dog by dogViewmodel.dog.collectAsState()
 
                     if (dog == null) {
-                        AddDogScreen(dogViewmodel, navController) { addedDog ->
-
-                        }
+                        AddDogScreen(
+                            viewModel = dogViewmodel,
+                            navController = navController,
+                            onDogAdded = { addedDog: DogEntity ->
+                                println("Added dog: ${addedDog.name}")
+                            }
+                        )
                     } else {
                         MainScreen(todosViewModel, dogViewmodel)
                     }
@@ -163,9 +168,13 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
                     CompletedTasksHistoryScreen(todosViewModel)
                 }
                 composable("createDogScreen") {
-                    AddDogScreen(dogViewModel, navController = navController) { addedDog ->
-                        println("New dog added: ${addedDog.name}")
-                    }
+                    AddDogScreen(
+                        viewModel = dogViewModel,
+                        navController = navController,
+                        onDogAdded = { addedDog: DogEntity ->
+                            println("Added dog: ${addedDog.name}")
+                        }
+                    )
                 }
                 composable("dogDetails") {
                     DogDetailsScreen(navController, dogViewModel) {

@@ -17,8 +17,11 @@ interface DogDAO {
     suspend fun update(dog: DogEntity)
     @Delete
     suspend fun delete(dog: DogEntity)
-    @Query("SELECT * FROM " + DogEntity.TABLE_NAME + " WHERE id = :id")
-    fun getDog(id: Int): DogEntity
+    @Query("SELECT * FROM " + DogEntity.TABLE_NAME + " LIMIT 1")
+    suspend fun getDog(): DogEntity?
     @Query("SELECT * FROM " + DogEntity.TABLE_NAME +  " ORDER BY id ASC")
     fun getAllDogs(): Flow<List<DogEntity>>
-}
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(dog: DogEntity)
+
+    }
