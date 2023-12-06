@@ -192,7 +192,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701102587928</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="add permission Status">
+      <option name="closed" value="true" />
+      <created>1701861722756</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701861722756</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -210,6 +218,7 @@
     <MESSAGE value="Initial Commit" />
     <MESSAGE value="Added All Dao's, and added entire UI for creating a Todo. Submit to database not yet functional due to foreign key constraint" />
     <MESSAGE value="Added Image selection for a Todo via camera" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Image selection for a Todo via camera" />
+    <MESSAGE value="add permission Status" />
+    <option name="LAST_COMMIT_MESSAGE" value="add permission Status" />
   </component>
 </project>
