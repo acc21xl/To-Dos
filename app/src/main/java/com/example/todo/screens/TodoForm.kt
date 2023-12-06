@@ -1,10 +1,17 @@
 package com.example.todo.screens
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.util.Log
 import android.widget.DatePicker
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +40,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -63,12 +71,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.todo.enums.Priority
 import com.example.todo.enums.Status
 import com.example.todo.MyNotification
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
+import com.example.todo.enums.PermissionStatus
 import com.example.todo.viewmodels.TodosViewModel
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -102,10 +112,100 @@ fun TodoForm(
     var toCompleteByDate by remember { mutableStateOf( existingTodo?.toCompleteByDate ?: Date()) }
     var imageBytes by remember { mutableStateOf(existingTodo?.imageBytes) }
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var showPermissionDialog by remember { mutableStateOf(false) }
+    var showNotificationPermissionDialog by remember { mutableStateOf(false) }
+    var showAlarmPermissionDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showNotificationPermissionDialog, showAlarmPermissionDialog) {
+        Log.d("TodoForm", "Dialog states changed. Notification: $showNotificationPermissionDialog, Alarm: $showAlarmPermissionDialog")
+    }
+
     LaunchedEffect(existingTodo) {
         imageBitmap = existingTodo?.imageBytes?.let { byteArrayToBitmap(it) }
     }
     val context = LocalContext.current
+
+    // Check Alarm and Notification permissions and return the status
+    fun checkPermissions(): PermissionStatus {
+        val hasAlarmPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.canScheduleExactAlarms()
+        } else {
+            true
+        }
+
+        val hasNotificationPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
+
+        return when {
+            hasAlarmPermission && hasNotificationPermission -> PermissionStatus.BOTH_GRANTED
+            !hasAlarmPermission && !hasNotificationPermission -> PermissionStatus.BOTH_DENIED
+            !hasAlarmPermission -> PermissionStatus.ALARM_DENIED
+            else -> PermissionStatus.NOTIFICATION_DENIED
+        }
+    }
+
+    fun navigateToExactAlarmPermissionSettings() {
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+        } else {
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        }
+        intent.data = Uri.fromParts("package", context.packageName, null)
+        context.startActivity(intent)
+    }
+
+    fun navigateToNotificationSettings(context: Context) {
+        val intent = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                // For Android Oreo and above, use the official Settings action and extra
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                }
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+                // For Android Lollipop through Nougat, use a custom action and extras
+                Intent("android.settings.APP_NOTIFICATION_SETTINGS").apply {
+                    putExtra("app_package", context.packageName)
+                    putExtra("app_uid", context.applicationInfo.uid)
+                }
+            }
+            else -> {
+                // Fallback for Android versions below Lollipop
+                Intent(Settings.ACTION_SETTINGS)
+            }
+        }
+        context.startActivity(intent)
+    }
+    // 在权限都被授予后提交数据并关闭表单
+    fun submitTodoAndNavigateAway() {
+        val newTodo = TodoEntity(
+            id = existingTodo?.id ?: 0,
+            title = title,
+            description = description,
+            dogId = 0, // Filled out later
+            moodScore = null,
+            priority = priority,
+            status = Status.ONGOING,
+            latitude = latitude,
+            longitude = longitude,
+            distance = distance,
+            isCompleted = false,
+            toCompleteByDate = toCompleteByDate,
+            creationDate = Date(),
+            completionDate = null,
+            deleted = false,
+            imageBytes = imageBytes
+        )
+
+        if (existingTodo != null) {
+            viewModel.updateTodo(newTodo, selectedTags)
+        } else {
+            viewModel.submitTodo(newTodo, selectedTags)
+        }
+
+        onClose()
+    }
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         BannerImagePicker(imageBitmap) { newBitmap ->
@@ -195,45 +295,125 @@ fun TodoForm(
 
                 Button(onClick = {
                     if (validateTodoInput(title, description)) {
-                        val newTodo = TodoEntity(
-                            id = existingTodo?.id ?: 0,
-                            title = title,
-                            description = description,
-                            dogId = 0, // Filled out later
-                            moodScore = null,
-                            priority = priority,
-                            status = Status.ONGOING,
-                            latitude = latitude,
-                            longitude = longitude,
-                            distance = distance,
-                            isCompleted = false,
-                            toCompleteByDate = toCompleteByDate,
-                            creationDate = Date(),
-                            completionDate = null,
-                            deleted = false,
-                            imageBytes = imageBytes
-                        )
+                        when (checkPermissions()) {
+                            PermissionStatus.BOTH_GRANTED -> {
+                                submitTodoAndNavigateAway()
+                                // Permissions granted, proceed with notification logic
+                                val myNotification = MyNotification(context, title, description)
+                                val time = toCompleteByDate.time
+                                myNotification.scheduleNotification(timeInMillis = time)
+                            }
+                            PermissionStatus.ALARM_DENIED -> {
+                                // Alarm permission denied, guide user to alarm permission settings
+//                                navigateToExactAlarmPermissionSettings()
+                                Log.d("TodoForm", "Alarm permission denied. Showing dialog.")
+                                showAlarmPermissionDialog = true
+                                Log.d("TodoForm","Alarm Dialog: $showAlarmPermissionDialog, Notification Dialog: $showNotificationPermissionDialog")
+                            }
+                            PermissionStatus.NOTIFICATION_DENIED -> {
+                                /// Notification permission denied, guide user to notification settings
+                                Log.d("TodoForm", "Notification permission denied. Showing dialog.")
+                                showNotificationPermissionDialog = true
+                                Log.d("TodoForm","Alarm Dialog: $showAlarmPermissionDialog, Notification Dialog: $showNotificationPermissionDialog")
+//                                val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+//                                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+//                                    }
+//                                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                                    showNotificationPermissionDialog = true
+//                                    Intent("android.settings.APP_NOTIFICATION_SETTINGS").apply {
+//                                        putExtra("app_package", context.packageName)
+//                                        putExtra("app_uid", context.applicationInfo.uid)
+//                                    }
+//                                } else {
+//                                    // Fallback for versions below Lollipop (unlikely for modern apps)
+//                                    Intent(Settings.ACTION_SETTINGS)
+//                                }
+//                                context.startActivity(intent)
+                            }
+                            PermissionStatus.BOTH_DENIED -> {
+                                // Both permissions denied, guide user to app settings
+                                showNotificationPermissionDialog = true
+//                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+//                                val uri = Uri.fromParts("package", context.packageName, null)
+//                                intent.data = uri
+//                                context.startActivity(intent)
+                            }
 
-                        if (existingTodo != null) {
-                            viewModel.updateTodo(newTodo, selectedTags)
-                        } else {
-                            viewModel.submitTodo(newTodo, selectedTags)
                         }
-
-                        onClose()
                     } else {
                         // Show error message for invalid input
+                        Log.d("TodoForm", "Input validation failed.")
                     }
-                    val myNotification = MyNotification(context,title,description)
-                    val time = toCompleteByDate.time
-                    myNotification.scheduleNotification(timeInMillis = time)
-                }) {
+
+                })
+                {
                     Text("Submit Todo")
                 }
-            }
+                if (showNotificationPermissionDialog) {
+                    Log.d("TodoForm", "Displaying notification permission dialog.")
+                    AlertDialog(
+                        onDismissRequest = { showNotificationPermissionDialog = false },
+                        title = { Text("Notification Permission Required") },
+                        text = { Text("This app requires notification permission to function properly. Please enable them in the app settings.") },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    showNotificationPermissionDialog = false
+                                    navigateToNotificationSettings(context)
+                                }) {
+                                Text("Go to Settings")
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = {
+                                    showNotificationPermissionDialog = false
+                                }) {
+                                Text("Cancel")
+                            }
+                        }
+                    )
+                }
+
+
+                if (showAlarmPermissionDialog) {
+                    Log.d("TodoForm", "Displaying alarm permission dialog.")
+                    AlertDialog(
+                        onDismissRequest = {
+                            // The user closes the dialogue box by clicking on the external area
+                            showAlarmPermissionDialog = false
+                        },
+                        title = { Text("Alarm Permission Required") },
+                        text = { Text("This app needs alarm permission to continue. Would you like to open settings to enable alarm permission?") },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    showAlarmPermissionDialog = false
+                                    // Guide the user to the alarm clock permission settings
+                                    navigateToExactAlarmPermissionSettings()
+                                }) {
+                                Text("Go to Settings")
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = {
+                                    // User chooses not to enable alarm privileges
+                                    showAlarmPermissionDialog = false
+                                }) {
+                                Text("Cancel")
+                            }
+                        }
+                    )
+                }
             }
         }
+
     }
+
+
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -431,3 +611,4 @@ fun validateTodoInput(
     // More tbd
     return true
 }
+
