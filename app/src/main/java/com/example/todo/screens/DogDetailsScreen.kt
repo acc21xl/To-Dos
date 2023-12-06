@@ -66,6 +66,7 @@ import java.util.Locale
 import com.example.todo.viewmodels.TodosViewModel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import java.time.format.DateTimeFormatter
 
 fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
@@ -74,6 +75,7 @@ fun ByteArray.toBitmap(): Bitmap {
 @Composable
 fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBackClicked: () -> Unit) {
     val dog by viewModel.dog.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -107,6 +109,19 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
                     )
                 }
             }
+            // Display dog details using Text, Image, etc.
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = " ${dog!!.name}")
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = "${dog!!.breed}")
+            Spacer(modifier = Modifier.height(30.dp))
+            fun dateFormat(date: Date?) = with(date ?: Date()) {
+                SimpleDateFormat("dd/MM/yyy").format(this)
+            }
+            var dogBirthday = dateFormat(dog!!.birthdayDate)
+            Text(text = dogBirthday)
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = " ${dog!!.notes}")
 
             Spacer(modifier = Modifier.height(16.dp))
         }
