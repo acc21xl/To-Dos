@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.example.todo.entities.TodoEntity
+import com.example.todo.services.GeoLocationService.locationViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,6 +33,15 @@ fun TodoDisplay(
     val imageBitmap = todo.imageBytes?.let { byteArrayToBitmap(it) }
     val tags = viewModel.getTagsForTodo(todo.id.toLong())
     val tagsAsState by tags.collectAsState(initial = emptyList())
+    var calculatedDistance by remember { mutableStateOf<Float?>(null) }
+
+    LaunchedEffect(todo) {
+        val lat = locationViewModel?.latitude ?: 0.0
+        val lon = locationViewModel?.longitude ?: 0.0
+        val todoLat = todo.latitude ?: 0.0
+        val todoLon = todo.longitude ?: 0.0
+        calculatedDistance = locationViewModel?.calculateDistance(lat, lon, todoLat, todoLon)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,9 +71,18 @@ fun TodoDisplay(
                 )
                 Divider(Modifier.padding(vertical = 8.dp))
 
-                Text("Latitude: ${todo.latitude}", style = MaterialTheme.typography.bodyMedium)
-                Text("Longitude: ${todo.longitude}", style = MaterialTheme.typography.bodyMedium)
-                Text("Distance: ${todo.distance} meters", style = MaterialTheme.typography.bodyMedium)
+
+                if (locationViewModel?.valid() == true) {
+                    Text("Latitude: ${todo.latitude}", style = MaterialTheme.typography.bodyMedium)
+                    Text("Longitude: ${todo.longitude}", style = MaterialTheme.typography.bodyMedium)
+                    calculatedDistance?.let {
+                        Text("Distance: ${it} meters", style = MaterialTheme.typography.bodyMedium)
+                    }
+                } else {
+                    Text("Location Unknown", style = MaterialTheme.typography.bodyMedium)
+                }
+
+
             }
     }
 }

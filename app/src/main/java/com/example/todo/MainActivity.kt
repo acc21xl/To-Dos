@@ -1,5 +1,11 @@
 package com.example.todo
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -54,7 +60,11 @@ import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo.screens.TypicalTodosScreen
+import com.example.todo.services.GeoLocationService
+import com.example.todo.viewmodels.LocationViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -74,7 +84,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        GeoLocationService.initialiseService(applicationContext)
+        if (!hasPermission()) {
+            requestFineLocationPermission()
+        }
         setContent {
+            val locationViewModel = viewModel<LocationViewModel>()
+            GeoLocationService.locationViewModel = locationViewModel
             TodoTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -94,6 +110,43 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        val locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        @SuppressLint("MissingPermission")
+        if (hasPermission()) {
+            val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (location != null) {
+                GeoLocationService.updateLatestLocation(location)
+            }
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                1000, 0.0f, GeoLocationService
+            )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager.removeUpdates(GeoLocationService)
+    }
+
+
+    private val GPS_LOCATION_PERMISSION_REQUEST = 1
+    private fun requestFineLocationPermission() {
+        ActivityCompat.requestPermissions(this,
+            arrayOf( android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION ),
+            GPS_LOCATION_PERMISSION_REQUEST
+        )
+    }
+
+    private fun hasPermission(): Boolean {
+        return PackageManager.PERMISSION_GRANTED ==
+                ActivityCompat.checkSelfPermission(
+                    applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION )
     }
 }
 

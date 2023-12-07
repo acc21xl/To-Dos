@@ -8,7 +8,7 @@ import com.example.todo.data.TodoDAO
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        // 从 Intent 中获取标题和消息
+        // Getting Titles and Messages from an Intent
         val title = intent.getStringExtra("title") ?: "Default Title"
         val message = intent.getStringExtra("message") ?: "Default Message"
 

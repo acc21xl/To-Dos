@@ -79,6 +79,7 @@ import com.example.todo.MyNotification
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
 import com.example.todo.enums.PermissionStatus
+import com.example.todo.services.GeoLocationService.locationViewModel
 import com.example.todo.viewmodels.TodosViewModel
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -108,11 +109,10 @@ fun TodoForm(
     var priority by remember { mutableStateOf( existingTodo?.priority ?: Priority.LOW) }
     var latitude by remember { mutableDoubleStateOf( existingTodo?.latitude ?: 0.0) }
     var longitude by remember { mutableDoubleStateOf( existingTodo?.longitude ?: 0.0) }
-    var distance by remember { mutableDoubleStateOf( existingTodo?.distance ?: 0.0) }
+//    var distance by remember { mutableDoubleStateOf( existingTodo?.distance ?: 0.0) }
     var toCompleteByDate by remember { mutableStateOf( existingTodo?.toCompleteByDate ?: Date()) }
     var imageBytes by remember { mutableStateOf(existingTodo?.imageBytes) }
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var showPermissionDialog by remember { mutableStateOf(false) }
     var showNotificationPermissionDialog by remember { mutableStateOf(false) }
     var showAlarmPermissionDialog by remember { mutableStateOf(false) }
 
@@ -176,7 +176,8 @@ fun TodoForm(
         }
         context.startActivity(intent)
     }
-    // 在权限都被授予后提交数据并关闭表单
+    // Submit the data and close the form after all permissions have been granted.
+
     fun submitTodoAndNavigateAway() {
         val newTodo = TodoEntity(
             id = existingTodo?.id ?: 0,
@@ -188,7 +189,7 @@ fun TodoForm(
             status = Status.ONGOING,
             latitude = latitude,
             longitude = longitude,
-            distance = distance,
+//            distance = calculatedDistance,
             isCompleted = false,
             toCompleteByDate = toCompleteByDate,
             creationDate = Date(),
@@ -269,12 +270,12 @@ fun TodoForm(
                         label = "Longitude",
                         width = fieldWidth
                     )
-                    NumberInputField(
-                        value = distance,
-                        onValueChange = { distance = it },
-                        label = "Distance",
-                        width = fieldWidth
-                    )
+//                    NumberInputField(
+//                        value = distance,
+//                        onValueChange = { distance = it },
+//                        label = "Distance",
+//                        width = fieldWidth
+//                    )
                 }
             }
 
@@ -315,29 +316,11 @@ fun TodoForm(
                                 Log.d("TodoForm", "Notification permission denied. Showing dialog.")
                                 showNotificationPermissionDialog = true
                                 Log.d("TodoForm","Alarm Dialog: $showAlarmPermissionDialog, Notification Dialog: $showNotificationPermissionDialog")
-//                                val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-//                                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-//                                    }
-//                                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                                    showNotificationPermissionDialog = true
-//                                    Intent("android.settings.APP_NOTIFICATION_SETTINGS").apply {
-//                                        putExtra("app_package", context.packageName)
-//                                        putExtra("app_uid", context.applicationInfo.uid)
-//                                    }
-//                                } else {
-//                                    // Fallback for versions below Lollipop (unlikely for modern apps)
-//                                    Intent(Settings.ACTION_SETTINGS)
-//                                }
-//                                context.startActivity(intent)
+
                             }
                             PermissionStatus.BOTH_DENIED -> {
                                 // Both permissions denied, guide user to app settings
                                 showNotificationPermissionDialog = true
-//                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-//                                val uri = Uri.fromParts("package", context.packageName, null)
-//                                intent.data = uri
-//                                context.startActivity(intent)
                             }
 
                         }
@@ -345,7 +328,6 @@ fun TodoForm(
                         // Show error message for invalid input
                         Log.d("TodoForm", "Input validation failed.")
                     }
-
                 })
                 {
                     Text("Submit Todo")
