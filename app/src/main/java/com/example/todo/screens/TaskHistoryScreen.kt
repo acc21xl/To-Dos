@@ -115,8 +115,7 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(align = Alignment.Top)
-                        .padding(vertical = 16.dp)
-                        .verticalScroll(scrollState),
+                        .padding(vertical = 16.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface

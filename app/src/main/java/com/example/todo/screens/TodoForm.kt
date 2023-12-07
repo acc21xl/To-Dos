@@ -198,10 +198,12 @@ fun TodoForm(
             imageBytes = imageBytes
         )
 
-        if (existingTodo != null) {
-            viewModel.updateTodo(newTodo, selectedTags)
-        } else {
-            viewModel.submitTodo(newTodo, selectedTags)
+        if (!validateTodoInput(title, description)) {
+            if (existingTodo != null) {
+                viewModel.updateTodo(newTodo, selectedTags)
+            } else {
+                viewModel.submitTodo(newTodo, selectedTags)
+            }
         }
 
         onClose()
@@ -587,13 +589,24 @@ fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
     return BitmapFactory.decodeStream(inputStream)
 }
 
-fun validateTodoInput(
-    title: String,
-    description: String
-): Boolean {
-    if (title.isBlank()) return false
-    if (description.isBlank()) return false
-    // More tbd
+fun isInputSafe(input: String): Boolean {
+    val disallowedPatterns = listOf(
+        "';", "--", "/*", "*/", "@@", "@",
+        "char", "nchar", "varchar", "nvarchar",
+        "alter", "begin", "cast", "create", "cursor", "declare", "delete",
+        "drop", "end", "exec", "execute", "fetch", "insert", "kill",
+        "select", "sys", "sysobjects", "syscolumns", "table", "update"
+    )
+    return disallowedPatterns.none { pattern ->
+        input.contains(pattern, ignoreCase = true)
+    }
+}
+
+fun validateTodoInput(title: String, description: String): Boolean {
+    if (title.isBlank() || !isInputSafe(title)) return false
+    if (description.isBlank() || !isInputSafe(description)) return false
     return true
 }
+
+
 
