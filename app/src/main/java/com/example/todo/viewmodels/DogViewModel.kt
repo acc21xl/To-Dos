@@ -35,6 +35,7 @@ class DogViewModel(private val dogDAO: DogDAO) : ViewModel() {
     fun updateDog(dog: DogEntity) {
         viewModelScope.launch {
             dogDAO.update(dog)
+            loadDog()
         }
     }
 
@@ -44,7 +45,23 @@ class DogViewModel(private val dogDAO: DogDAO) : ViewModel() {
         }
     }
     suspend fun getDog(): DogEntity? {
-        return dogDAO.getDog(0)
+        return dogDAO.getDog()
     }
+    fun createOrUpdateDog(newDogEntity: DogEntity) {
+        viewModelScope.launch {
+            val existingDog = dogDAO.getDog()
+            val dogToUpdate = existingDog?.copy(
+                name = newDogEntity.name,
+                breed = newDogEntity.breed,
+                birthdayDate = newDogEntity.birthdayDate,
+                notes = newDogEntity.notes,
+                imageBytes = newDogEntity.imageBytes,
+                deleted = false
+            ) ?: newDogEntity
 
+            dogDAO.insertOrUpdate(dogToUpdate)
+            loadDog()
+        }
+
+    }
 }
