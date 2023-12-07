@@ -66,7 +66,6 @@ import java.util.Locale
 import com.example.todo.viewmodels.TodosViewModel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.compose.material3.AlertDialog
 import java.time.format.DateTimeFormatter
 
 fun ByteArray.toBitmap(): Bitmap {
@@ -86,6 +85,11 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
     ) {
         // Check if dog is not null before displaying details
         if (dog != null) {
+            // Display dog details using Text, Image, etc.
+            Text(text = "Dog Name: ${dog!!.name}")
+            Text(text = "Dog Breed: ${dog!!.breed}")
+            Text(text = "Dog Birthday: ${dog!!.birthdayDate}")
+            Text(text = "Dog Notes: ${dog!!.notes}")
             // Check if there are image bytes
             if (dog!!.imageBytes?.isNotEmpty() == true) {
                 // Convert image bytes to Bitmap
@@ -120,33 +124,6 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
             Text(text = " ${dog!!.notes}")
 
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { showDialog = true }) {
-                Text(text = "Edit")
-            }
-            if (showDialog) {
-                AlertDialog(
-                    onDismissRequest = { showDialog = false },
-                    title = { Text(text = "Edit Dog") },
-                    text = {
-                        // Show AddDogScreen in the dialog with the current dog details
-                        AddDogScreen(
-                            viewModel = viewModel,
-                            navController = navController,
-                            onDogAdded = { /* Handle added dog if needed */ },
-                            existingDog = dog
-                        )
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                showDialog = false
-                            }
-                        ) {
-                            Text("Cancel Changes")
-                        }
-                    }
-                )
-            }
         }
 
     }

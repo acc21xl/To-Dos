@@ -9,9 +9,15 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e0e37a21-f651-4f66-89c1-f141e9187d2c" name="Changes" comment="Ability to edit dogs - Photo not supported yet">
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/CreateDogActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/CreateDogActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/DogDetailsScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/DogDetailsScreen.kt" afterDir="false" />
+    <list default="true" id="e0e37a21-f651-4f66-89c1-f141e9187d2c" name="Changes" comment="workspace.xml">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/LocationViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/AlarmReceiver.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/AlarmReceiver.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TodoEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TodoEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TodoForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TodoForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ViewTodo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ViewTodo.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,7 +27,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\User\.android\avd\Pixel_6_API_34.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[cbe2b9e9]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -69,6 +75,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Enum" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -95,9 +102,15 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lenovo/AndroidStudioProjects/GeoLocation&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;experimental&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="com.example.todo.services" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="Todo.app.main" />
@@ -109,6 +122,7 @@
       <option name="ALL_USERS" value="false" />
       <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
       <option name="CLEAR_APP_STORAGE" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="CLEAR_LOGCAT" value="false" />
@@ -195,15 +209,23 @@
       <option name="project" value="LOCAL" />
       <updated>1701861722756</updated>
     </task>
-    <task id="LOCAL-00004" summary="Ability to edit dogs - Photo not supported yet">
+    <task id="LOCAL-00004" summary="add permission Status">
       <option name="closed" value="true" />
-      <created>1701877580114</created>
+      <created>1701862013439</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1701877580114</updated>
+      <updated>1701862013439</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="workspace.xml">
+      <option name="closed" value="true" />
+      <created>1701915232143</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1701915232143</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -222,8 +244,8 @@
     <MESSAGE value="Added All Dao's, and added entire UI for creating a Todo. Submit to database not yet functional due to foreign key constraint" />
     <MESSAGE value="Added Image selection for a Todo via camera" />
     <MESSAGE value="add permission Status" />
-    <MESSAGE value="Ability to edit dogs" />
-    <MESSAGE value="Ability to edit dogs - Photo not supported yet" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ability to edit dogs - Photo not supported yet" />
+    <MESSAGE value="pull" />
+    <MESSAGE value="workspace.xml" />
+    <option name="LAST_COMMIT_MESSAGE" value="workspace.xml" />
   </component>
 </project>

@@ -18,7 +18,7 @@ data class TodoEntity(
     val imageBytes: ByteArray?,
     val latitude: Double?,
     val longitude: Double?,
-    val distance: Double?,
+//    val distance: Double?,
     val status: Status,
     val creationDate: Date,
     val isCompleted: Boolean,
@@ -48,7 +48,7 @@ data class TodoEntity(
         } else if (other.imageBytes != null) return false
         if (latitude != other.latitude) return false
         if (longitude != other.longitude) return false
-        if (distance != other.distance) return false
+//        if (distance != other.distance) return false
         if (status != other.status) return false
         if (creationDate != other.creationDate) return false
         if (isCompleted != other.isCompleted) return false
@@ -69,7 +69,7 @@ data class TodoEntity(
         result = 31 * result + (imageBytes?.contentHashCode() ?: 0)
         result = 31 * result + (latitude?.hashCode() ?: 0)
         result = 31 * result + (longitude?.hashCode() ?: 0)
-        result = 31 * result + (distance?.hashCode() ?: 0)
+//        result = 31 * result + (distance?.hashCode() ?: 0)
         result = 31 * result + status.hashCode()
         result = 31 * result + creationDate.hashCode()
         result = 31 * result + isCompleted.hashCode()
