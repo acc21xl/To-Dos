@@ -80,6 +80,9 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
                     onVisibilityClicked = { task ->
                         currentTask = task
                         showTodoDisplayDialog = true
+                    },
+                    onDeleteTask = { task ->
+                        todosViewModel.deleteTask(task.id.toLong())
                     }
                 )
             }
@@ -158,7 +161,8 @@ fun PriorityDrawer(
     isInitiallyExpanded: Boolean,
     onTaskCheckedChange: (TodoEntity, Boolean) -> Unit,
     onTaskClicked: (TodoEntity) -> Unit,
-    onVisibilityClicked: (TodoEntity) -> Unit
+    onVisibilityClicked: (TodoEntity) -> Unit,
+    onDeleteTask: (TodoEntity) -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(isInitiallyExpanded) }
 
@@ -182,7 +186,8 @@ fun PriorityDrawer(
                     task = task,
                     onTaskCheckedChange = { isChecked -> onTaskCheckedChange(task, isChecked) },
                     onTaskClicked = { onTaskClicked(task) },
-                    onVisibilityClicked = { onVisibilityClicked(task) }
+                    onVisibilityClicked = { onVisibilityClicked(task) },
+                    onDeleteClicked = { onDeleteTask(task) }
                 )
             }
         }

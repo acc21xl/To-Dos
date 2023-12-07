@@ -65,4 +65,7 @@ interface TodoDAO {
 
     @Query("DELETE FROM todo_tag_join WHERE todoId = :todoId")
     suspend fun deleteTodoTags(todoId: Long)
+
+    @Query("DELETE FROM todos WHERE id = :taskId")
+    suspend fun deleteTask(taskId: Long)
 }

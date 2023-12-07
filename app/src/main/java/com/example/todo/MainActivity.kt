@@ -55,6 +55,7 @@ import com.example.todo.viewmodels.DogViewModelFactory
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Visibility
@@ -237,7 +238,8 @@ fun TaskRow(
     task: TodoEntity,
     onTaskCheckedChange: (Boolean) -> Unit,
     onTaskClicked: () -> Unit,
-    onVisibilityClicked: () -> Unit
+    onVisibilityClicked: () -> Unit,
+    onDeleteClicked: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -267,6 +269,18 @@ fun TaskRow(
             }
             IconButton(onClick = onVisibilityClicked) {
                 Icon(imageVector = Icons.Default.Visibility, contentDescription = "View")
+            }
+            IconButton(
+                onClick = onDeleteClicked,
+                modifier = Modifier.padding(start = 8.dp),
+                content = {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            )
             }
         }
     }

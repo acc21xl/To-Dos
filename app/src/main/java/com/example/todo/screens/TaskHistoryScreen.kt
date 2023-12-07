@@ -61,6 +61,9 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
                     onVisibilityClicked = {
                         currentTask = task
                         showTodoDisplayDialog = true
+                    },
+                    onDeleteClicked = {
+                        todosViewModel.deleteTask(task.id.toLong())
                     }
                 )
             }

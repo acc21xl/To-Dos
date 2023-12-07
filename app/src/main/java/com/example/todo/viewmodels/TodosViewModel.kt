@@ -14,8 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class TodosViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
-                     private val tagDAO: TagDAO) : ViewModel() {
+class TodosViewModel(
+    private val todoDAO: TodoDAO,
+    private val dogDAO: DogDAO,
+    private val tagDAO: TagDAO
+) : ViewModel() {
     private val _tasks = MutableStateFlow<List<TodoEntity>>(emptyList())
     val dog = MutableStateFlow<DogEntity?>(null)
     val tasks = _tasks.asStateFlow()
@@ -85,6 +88,13 @@ class TodosViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
     fun updateTask(task: TodoEntity) {
         viewModelScope.launch {
             todoDAO.update(task)
+            loadTasks()
+        }
+    }
+
+    fun deleteTask(taskId: Long) {
+        viewModelScope.launch {
+            todoDAO.deleteTask(taskId)
             loadTasks()
         }
     }
