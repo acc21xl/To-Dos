@@ -39,6 +39,8 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
     var selectedMood by remember { mutableStateOf(MoodScore.NEUTRAL) }
     var currentTask by remember { mutableStateOf<TodoEntity?>(null) }
     val scrollState = rememberScrollState()
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var taskToDelete by remember { mutableStateOf<TodoEntity?>(null) }
 
     Column {
         Text(
@@ -70,11 +72,23 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
                         showTodoDisplayDialog = true
                     },
                     onDeleteClicked = {
-                        todosViewModel.deleteTask(task.id.toLong())
+                        taskToDelete = task
+                        showDeleteConfirmDialog = true
                     }
                 )
             }
         }
+    }
+
+    if (showDeleteConfirmDialog && taskToDelete != null) {
+        ConfirmDeleteDialog(task = taskToDelete!!, onConfirm = {
+            todosViewModel.deleteTask(it.id.toLong())
+            showDeleteConfirmDialog = false
+            taskToDelete = null
+        }, onDismiss = {
+            showDeleteConfirmDialog = false
+            taskToDelete = null
+        })
     }
 
     if (showMoodDialog) {

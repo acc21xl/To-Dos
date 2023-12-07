@@ -54,6 +54,9 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
     val tasksGroupedByPriority = activeTasks.groupBy { it.priority }.toSortedMap(reverseOrder())
     val highestPriority = tasksGroupedByPriority.keys.firstOrNull()
     val scrollState = rememberScrollState()
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var taskToDelete by remember { mutableStateOf<TodoEntity?>(null) }
+
 
     Column {
         Text(
@@ -85,12 +88,24 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
                         showTodoDisplayDialog = true
                     },
                     onDeleteTask = { task ->
-                        todosViewModel.deleteTask(task.id.toLong())
+                        taskToDelete = task
+                        showDeleteConfirmDialog = true
                     }
                 )
             }
         }
     }
+    }
+
+    if (showDeleteConfirmDialog && taskToDelete != null) {
+        ConfirmDeleteDialog(task = taskToDelete!!, onConfirm = {
+            todosViewModel.deleteTask(it.id.toLong())
+            showDeleteConfirmDialog = false
+            taskToDelete = null
+        }, onDismiss = {
+            showDeleteConfirmDialog = false
+            taskToDelete = null
+        })
     }
 
     if (showMoodDialog) {
@@ -255,6 +270,25 @@ fun MoodSelector(sliderPosition: Float, onSliderPositionChanged: (Float) -> Unit
             steps = 3
         )
     }
+}
+
+@Composable
+fun ConfirmDeleteDialog(task: TodoEntity, onConfirm: (TodoEntity) -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Confirm Delete") },
+        text = { Text("Are you sure you want to delete the task '${task.title}'?") },
+        confirmButton = {
+            Button(onClick = { onConfirm(task) }) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 
