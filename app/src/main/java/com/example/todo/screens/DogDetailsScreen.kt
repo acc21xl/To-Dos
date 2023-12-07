@@ -66,8 +66,13 @@ import java.util.Locale
 import com.example.todo.viewmodels.TodosViewModel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import java.time.format.DateTimeFormatter
 import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Brush
 
 fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
@@ -77,6 +82,19 @@ fun ByteArray.toBitmap(): Bitmap {
 fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBackClicked: () -> Unit) {
     val dog by viewModel.dog.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+
+
+    val moodScoresState = viewModel.recentMoodScores.collectAsState()
+    val moodScores = moodScoresState.value
+
+    val averageMood = if (moodScores.isNotEmpty()) {
+        moodScores.average()
+    } else {
+        3.0
+    }
+
+
+    println(averageMood)
 
     Column(
         modifier = Modifier
@@ -123,6 +141,9 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
             Button(onClick = { showDialog = true }) {
                 Text(text = "Edit")
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            MoodProgressBar(averageMood)
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
@@ -149,6 +170,62 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
             }
 
         }
-
     }
 }
+
+@Composable
+fun MoodProgressBar(averageMood: Double) {
+    val moodColors = listOf(
+        Color.Red,        // 1 - Very Unhappy
+        Color(0xFFFFA500),// 2 - Unhappy
+        Color(0xFFFFA500),// 3 - Neutral
+        Color(0xFF90EE90),// 4 - Happy
+        Color(0xFF006400) // 5 - Very Happy
+    )
+
+    val moodText = when {
+        averageMood >= 4.5 -> "Very Happy"
+        averageMood >= 3.5 -> "Happy"
+        averageMood >= 3 -> "Neutral"
+        averageMood >= 2 -> "Unhappy"
+        else -> "Very Unhappy"
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            moodColors.forEachIndexed { index, color ->
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                        .border(
+                            width = if (averageMood.toInt() == index + 1) 2.dp else 0.dp,
+                            color = Color.Black,
+                            shape = CircleShape
+                        )
+                )
+            }
+        }
+
+        Text(
+            text = "Current Mood: $moodText",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+
+        Text(
+            text = "(Based on most recent 5 Tasks)",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+}
+
+

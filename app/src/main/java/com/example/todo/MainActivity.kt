@@ -79,7 +79,8 @@ class MainActivity : ComponentActivity() {
     }
     private val dogViewmodel: DogViewModel by viewModels {
         DogViewModelFactory(
-            (application as TodoApplication).dogDAO
+            (application as TodoApplication).dogDAO,
+            (application as TodoApplication).todoDAO
         )
     }
 

@@ -208,44 +208,45 @@ fun AlertBadge(count: Int) {
 
 @Composable
 fun MoodSelectorDialog(onMoodSelected: (MoodScore) -> Unit, onSubmit: () -> Unit, onDismiss: () -> Unit) {
+    var sliderPosition by remember { mutableStateOf(3f) }
+
     AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Please score your dog's mood during this task") },
-            text = {
-                MoodSelector(onMoodSelected)
-            },
-            confirmButton = {
-                Button(onClick = onSubmit) {
-                    Text("Submit")
-                }
-            },
-            dismissButton = {
-                Button(onClick = onDismiss) {
-                    Text("Cancel")
-                }
+        onDismissRequest = onDismiss,
+        title = { Text("Please score your dog's mood during this task") },
+        text = {
+            MoodSelector(sliderPosition) { newPosition ->
+                sliderPosition = newPosition
             }
+        },
+        confirmButton = {
+            Button(onClick = {
+                onMoodSelected(getMoodFromSliderPosition(sliderPosition.toInt()))
+                onSubmit()
+            }) {
+                Text("Submit")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
     )
 }
 
-
 @Composable
-fun MoodSelector(onMoodSelected: (MoodScore) -> Unit) {
-    var sliderPosition by remember { mutableFloatStateOf(3f) } // Default to NEUTRAL
-    val moodScore = getMoodFromSliderPosition(sliderPosition.toInt())
-
+fun MoodSelector(sliderPosition: Float, onSliderPositionChanged: (Float) -> Unit) {
     Column {
-        Text("Select Mood: ${moodScore.name}")
+        Text("Select Mood: ${getMoodFromSliderPosition(sliderPosition.toInt()).name}")
         Slider(
-                value = sliderPosition,
-                onValueChange = { sliderPosition = it },
-                onValueChangeFinished = {
-                    onMoodSelected(moodScore)
-                },
-                valueRange = 1f..5f,
-                steps = 3
+            value = sliderPosition,
+            onValueChange = onSliderPositionChanged,
+            valueRange = 1f..5f,
+            steps = 3
         )
     }
 }
+
 
 fun getMoodFromSliderPosition(position: Int): MoodScore {
     return when (position) {
