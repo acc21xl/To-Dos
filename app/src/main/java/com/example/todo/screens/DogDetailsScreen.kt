@@ -69,6 +69,8 @@ import android.graphics.BitmapFactory
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import java.time.format.DateTimeFormatter
 import androidx.compose.material3.AlertDialog
 import androidx.compose.ui.geometry.CornerRadius
@@ -82,6 +84,7 @@ fun ByteArray.toBitmap(): Bitmap {
 fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBackClicked: () -> Unit) {
     val dog by viewModel.dog.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
 
     val moodScoresState = viewModel.recentMoodScores.collectAsState()
@@ -96,10 +99,12 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
 
     println(averageMood)
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState), // Add the verticalScroll modifier
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Check if dog is not null before displaying details
@@ -149,13 +154,19 @@ fun DogDetailsScreen(navController: NavController, viewModel: DogViewModel, onBa
                     onDismissRequest = { showDialog = false },
                     title = { Text(text = "Edit Dog") },
                     text = {
-                        // Show AddDogScreen in the dialog with the current dog details
-                        AddDogScreen(
-                            viewModel = viewModel,
-                            navController = navController,
-                            onDogAdded = { /* Handle added dog if needed */ },
-                            existingDog = dog
-                        )
+                        val scrollState = rememberScrollState()
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState)
+                        ) {
+                            // Show AddDogScreen in the dialog with the current dog details
+                            AddDogScreen(
+                                viewModel = viewModel,
+                                navController = navController,
+                                onDogAdded = { /* Handle added dog if needed */ },
+                                existingDog = dog
+                            )
+                        }
                     },
                     confirmButton = {
                         Button(

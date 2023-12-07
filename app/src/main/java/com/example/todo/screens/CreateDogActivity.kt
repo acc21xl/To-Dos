@@ -2,6 +2,7 @@ package com.example.todo.screens
 
 import android.Manifest
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -106,10 +107,10 @@ fun AddDogScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         val context = LocalContext.current
-        BirthdayPicker(
+        DatePicker(
             context = context,
-            selectedDate = birthday,
-            onDateSelected = { newDate ->
+            selectedDateTime = birthday,
+            onDateTimeSelected = { newDate ->
                 birthday = newDate
             }
         )
@@ -224,37 +225,49 @@ fun DogImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
 }
 
 @Composable
-fun BirthdayPicker(
+fun DatePicker(
     context: Context,
-    selectedDate: Date?,
-    onDateSelected: (Date) -> Unit
+    selectedDateTime: Date?,
+    onDateTimeSelected: (Date) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    val dateString = selectedDate?.let { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it) } ?: "Select Date"
+    val dateTimeString = selectedDateTime?.let {
+        SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(it)
+    } ?: "Select Date and Time"
 
     OutlinedButton(
         onClick = { showDialog = true },
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = dateString)
+        Text(text = dateTimeString)
     }
 
     if (showDialog) {
         val currentCalendar = Calendar.getInstance()
-        selectedDate?.let { currentCalendar.time = it }
+        selectedDateTime?.let { currentCalendar.time = it }
 
         val year = currentCalendar.get(Calendar.YEAR)
         val month = currentCalendar.get(Calendar.MONTH)
         val day = currentCalendar.get(Calendar.DAY_OF_MONTH)
+        val hour = currentCalendar.get(Calendar.HOUR_OF_DAY)
+        val minute = currentCalendar.get(Calendar.MINUTE)
 
         DatePickerDialog(
             context,
             { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                val selectedCalendar = Calendar.getInstance().apply {
-                    set(selectedYear, selectedMonth, selectedDayOfMonth)
-                }
-                onDateSelected(selectedCalendar.time)
-                showDialog = false
+                TimePickerDialog(
+                    context,
+                    { _, selectedHour, selectedMinute ->
+                        val selectedCalendar = Calendar.getInstance().apply {
+                            set(selectedYear, selectedMonth, selectedDayOfMonth, selectedHour, selectedMinute)
+                        }
+                        onDateTimeSelected(selectedCalendar.time)
+                        showDialog = false
+                    },
+                    hour,
+                    minute,
+                    true // Use 24-hour format
+                ).show()
             },
             year,
             month,

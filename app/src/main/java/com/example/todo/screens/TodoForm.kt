@@ -238,10 +238,13 @@ fun TodoForm(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(8.dp))
-
-            DateInput("To Complete By", toCompleteByDate) { newDate ->
-                toCompleteByDate = newDate
-            }
+            DatePicker(
+                context = context,
+                selectedDateTime = toCompleteByDate,
+                onDateTimeSelected = { newDate ->
+                    toCompleteByDate = newDate
+                }
+            )
             Spacer(Modifier.height(8.dp))
 
             TagInput(selectedTags)

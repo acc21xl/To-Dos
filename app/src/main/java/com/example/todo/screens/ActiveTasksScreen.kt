@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -51,6 +53,7 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
     var currentTask by remember { mutableStateOf<TodoEntity?>(null) }
     val tasksGroupedByPriority = activeTasks.groupBy { it.priority }.toSortedMap(reverseOrder())
     val highestPriority = tasksGroupedByPriority.keys.firstOrNull()
+    val scrollState = rememberScrollState()
 
     Column {
         Text(
@@ -114,7 +117,8 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(align = Alignment.Top)
-                        .padding(vertical = 16.dp),
+                        .padding(vertical = 16.dp)
+                        .verticalScroll(scrollState),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
@@ -209,13 +213,19 @@ fun AlertBadge(count: Int) {
 @Composable
 fun MoodSelectorDialog(onMoodSelected: (MoodScore) -> Unit, onSubmit: () -> Unit, onDismiss: () -> Unit) {
     var sliderPosition by remember { mutableStateOf(3f) }
+    val scrollState = rememberScrollState()
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Please score your dog's mood during this task") },
         text = {
-            MoodSelector(sliderPosition) { newPosition ->
-                sliderPosition = newPosition
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+            ) {
+                MoodSelector(sliderPosition) { newPosition ->
+                    sliderPosition = newPosition
+                }
             }
         },
         confirmButton = {

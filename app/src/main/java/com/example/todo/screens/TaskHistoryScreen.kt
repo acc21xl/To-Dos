@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +38,8 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
     var showTodoDisplayDialog by remember { mutableStateOf(false) }
     var selectedMood by remember { mutableStateOf(MoodScore.NEUTRAL) }
     var currentTask by remember { mutableStateOf<TodoEntity?>(null) }
+    val scrollState = rememberScrollState()
+
     Column {
         Text(
             "Completed Tasks",
@@ -42,8 +47,10 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
             modifier = Modifier.padding(8.dp)
         )
         Spacer(Modifier.height(4.dp))
-        Column(verticalArrangement = Arrangement.SpaceEvenly) {
-            completedTasks.forEach { task ->
+
+        LazyColumn {
+            items(completedTasks.size) { index ->
+                val task = completedTasks[index]
                 TaskRow(
                     task = task,
                     onTaskCheckedChange = { isChecked ->
@@ -94,7 +101,8 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(align = Alignment.Top)
-                        .padding(vertical = 16.dp),
+                        .padding(vertical = 16.dp)
+                        .verticalScroll(scrollState),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
