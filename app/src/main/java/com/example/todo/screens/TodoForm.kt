@@ -197,12 +197,13 @@ fun TodoForm(
             deleted = false,
             imageBytes = imageBytes
         )
-
+        if (validateTodoInput(title, description)) {
             if (existingTodo != null) {
                 viewModel.updateTodo(newTodo, selectedTags)
             } else {
                 viewModel.submitTodo(newTodo, selectedTags)
             }
+        }
 
         onClose()
     }
@@ -589,11 +590,7 @@ fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
 
 fun isInputSafe(input: String): Boolean {
     val disallowedPatterns = listOf(
-        "';", "--", "/*", "*/", "@@", "@",
-        "char", "nchar", "varchar", "nvarchar",
-        "alter", "begin", "cast", "create", "cursor", "declare", "delete",
-        "drop", "end", "exec", "execute", "fetch", "insert", "kill",
-        "select", "sys", "sysobjects", "syscolumns", "table", "update"
+        "';", "--", "/*", "*/", "@@", "@","\"", "\'"
     )
     return disallowedPatterns.none { pattern ->
         input.contains(pattern, ignoreCase = true)
