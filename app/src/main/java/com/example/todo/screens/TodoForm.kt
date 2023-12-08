@@ -198,13 +198,11 @@ fun TodoForm(
             imageBytes = imageBytes
         )
 
-        if (!validateTodoInput(title, description)) {
             if (existingTodo != null) {
                 viewModel.updateTodo(newTodo, selectedTags)
             } else {
                 viewModel.submitTodo(newTodo, selectedTags)
             }
-        }
 
         onClose()
     }
