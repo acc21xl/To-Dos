@@ -55,6 +55,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import com.example.todo.screens.TodoForm
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,9 +151,11 @@ fun AddDogScreen(
                     imageBytes = imageBytes,
                     deleted = false
                 )
+                if (validateDogInput(name, breed, notes)){
+                    viewModel.createOrUpdateDog(dog)
+                    navController.popBackStack()
+                }
 
-                viewModel.createOrUpdateDog(dog)
-                navController.popBackStack()
                 if (onDogAdded != null) {
                     onDogAdded(dog)
                 }
@@ -283,3 +286,11 @@ fun ByteArray?.asBitmap(): Bitmap? {
         null
     }
 }
+
+fun validateDogInput(name: String, breed: String, notes: String): Boolean {
+    if (name.isBlank() || !isInputSafe(name)) return false
+    if (breed.isBlank() || !isInputSafe(breed)) return false
+    if (!isInputSafe(notes)) return false
+    return true
+}
+
