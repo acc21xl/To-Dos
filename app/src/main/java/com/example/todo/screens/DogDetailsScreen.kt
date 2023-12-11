@@ -195,8 +195,8 @@ fun MoodProgressBar(averageMood: Double) {
     )
 
     val moodText = when {
-        averageMood >= 4.5 -> "Very Happy"
-        averageMood >= 3.5 -> "Happy"
+        averageMood >= 5 -> "Very Happy"
+        averageMood >= 4 -> "Happy"
         averageMood >= 3 -> "Neutral"
         averageMood >= 2 -> "Unhappy"
         else -> "Very Unhappy"
