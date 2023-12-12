@@ -73,7 +73,7 @@ class DogViewModel(private val dogDAO: DogDAO,
 
     }
 
-    private fun loadCompletedTasks() {
+    fun loadCompletedTasks() {
         viewModelScope.launch {
             todoDAO.getCompletedTodos().collect { listOfCompletedTodos ->
                 _completedTasks.value = listOfCompletedTodos

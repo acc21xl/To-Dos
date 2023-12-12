@@ -71,15 +71,15 @@ fun TodoDisplay(
                 )
                 Divider(Modifier.padding(vertical = 8.dp))
 
+                Text("Latitude: ${todo.latitude}", style = MaterialTheme.typography.bodyMedium)
+                Text("Longitude: ${todo.longitude}", style = MaterialTheme.typography.bodyMedium)
 
                 if (locationViewModel?.valid() == true) {
-                    Text("Latitude: ${todo.latitude}", style = MaterialTheme.typography.bodyMedium)
-                    Text("Longitude: ${todo.longitude}", style = MaterialTheme.typography.bodyMedium)
                     calculatedDistance?.let {
                         Text("Distance: ${it} meters", style = MaterialTheme.typography.bodyMedium)
                     }
                 } else {
-                    Text("Location Unknown", style = MaterialTheme.typography.bodyMedium)
+                    Text("Distance: Location Permission is not granted", style = MaterialTheme.typography.bodyMedium)
                 }
 
 
