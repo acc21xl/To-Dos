@@ -42,7 +42,7 @@ class TodosViewModel(
         }
     }
 
-    fun loadActiveTasks() {
+    private fun loadActiveTasks() {
         viewModelScope.launch {
             todoDAO.getActiveTodos().collect { listOfActiveTodos ->
                 _activeTasks.value = listOfActiveTodos
@@ -68,7 +68,7 @@ class TodosViewModel(
         newTodo: TodoEntity, tags: List<TagEntity>
     ) {
         viewModelScope.launch {
-            val newTodoId = todoDAO.insertNewTodoWithTags(newTodo, tags)
+            todoDAO.insertNewTodoWithTags(newTodo, tags)
             loadTasks()
         }
     }
@@ -76,7 +76,7 @@ class TodosViewModel(
         todo: TodoEntity, tags: List<TagEntity>
     ) {
         viewModelScope.launch {
-            val newTodoId = todoDAO.updateTodoWithTags(todo, tags)
+            todoDAO.updateTodoWithTags(todo, tags)
             loadTasks()
         }
     }
@@ -94,20 +94,11 @@ class TodosViewModel(
 
     fun deleteTask(taskId: Long) {
         viewModelScope.launch {
+            todoDAO.deleteTodoTags(taskId)
             todoDAO.deleteTask(taskId)
             loadTasks()
         }
     }
-
-//    class TodoRepository(private val todoDAO: TodoDAO) {
-//        fun getNextTodoTime(): Flow<List<TodoEntity>> {
-//            val todos = todoDAO.getAllTodos()
-//            val dates = todoDAO.getDateToCompleter()
-//            val currentTime = System.currentTimeMillis()
-//            return dates
-//
-//        }
-//    }
 
 }
 

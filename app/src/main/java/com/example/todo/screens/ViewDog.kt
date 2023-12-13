@@ -118,7 +118,7 @@ fun ViewDog(navController: NavController, viewModel: DogViewModel) {
                             .fillMaxWidth()
                             .verticalScroll(scrollState)
                         ) {
-                            // Show AddDogScreen in the dialog with the current dog details
+                            // Show DogForm in the dialog with the current dog details
                             DogForm(
                                 viewModel = viewModel,
                                 navController = navController,

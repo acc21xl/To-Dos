@@ -103,9 +103,8 @@ class DogViewModel(private val dogDAO: DogDAO,
         return moodColors[roundedMood - 1]
     }
     fun getMoodText(averageMood: Double): String {
-        val roundedMood = averageMood.roundToInt().coerceIn(1, 5)
 
-        return when (roundedMood) {
+        return when (averageMood.roundToInt().coerceIn(1, 5)) {
             1 -> "Very Unhappy"
             2 -> "Unhappy"
             3 -> "Neutral"
