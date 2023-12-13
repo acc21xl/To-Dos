@@ -9,15 +9,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4bf3d0c6-d9c8-41d6-b77a-e677f9248352" name="Changes" comment="Big Code cleanup">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/TodoDAO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/data/TodoDAO.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TodoEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TodoEntity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TodoTagJoin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/entities/TodoTagJoin.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ViewDog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ViewDog.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/DogViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/DogViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/MoodViewModel.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/TodosViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/TodosViewModel.kt" afterDir="false" />
+    <list default="true" id="4bf3d0c6-d9c8-41d6-b77a-e677f9248352" name="Changes" comment="Fixed deletion of todos with tags and done some more cleaning up">
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/LocationViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/LocationViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -388,7 +381,14 @@
       <option name="project" value="LOCAL" />
       <updated>1702467151377</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Fixed deletion of todos with tags and done some more cleaning up">
+      <created>1702467835814</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1702467835814</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -414,6 +414,7 @@
     <MESSAGE value="Added delete confirmation" />
     <MESSAGE value="Protect against sql injection" />
     <MESSAGE value="Big Code cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Big Code cleanup" />
+    <MESSAGE value="Fixed deletion of todos with tags and done some more cleaning up" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed deletion of todos with tags and done some more cleaning up" />
   </component>
 </project>
