@@ -12,6 +12,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+/**
+ * ViewModel for managing dog-related data
+ * This ViewModel handles operations related to DogEntity, such as creating, updating,
+ * and deleting dogs
+ * It also manages the retrieval of mood scores based on completed tasks and provides utility
+ * methods for converting these mood scores into color and text representations
+ */
 class DogViewModel(private val dogDAO: DogDAO,
                    private val todoDAO: TodoDAO) : ViewModel() {
     private val _dog = MutableStateFlow<DogEntity?>(null)
@@ -47,12 +54,18 @@ class DogViewModel(private val dogDAO: DogDAO,
         }
     }
 
+    /**
+     * Loads the dog information from the database.
+     */
     fun deleteDog(dog: DogEntity) {
         viewModelScope.launch {
             dogDAO.delete(dog)
         }
     }
 
+    /**
+     *
+     */
     fun createOrUpdateDog(newDogEntity: DogEntity) {
         viewModelScope.launch {
             val existingDog = dogDAO.getDog()
@@ -71,6 +84,9 @@ class DogViewModel(private val dogDAO: DogDAO,
 
     }
 
+    /**
+     * Loads completed tasks from the database and updates the recent mood scores.
+     */
     private fun loadCompletedTasks() {
         viewModelScope.launch {
             todoDAO.getCompletedTodos().collect { listOfCompletedTodos ->
@@ -80,6 +96,10 @@ class DogViewModel(private val dogDAO: DogDAO,
         }
     }
 
+    /**
+     * Updates the recent mood scores based on the latest completed tasks.
+     * @param completedTodos List of recently completed TodoEntity items.
+     */
     private fun updateRecentMoodScores(completedTodos: List<TodoEntity>) {
         val moodScores = completedTodos
             .filter { it.moodScore != null }
@@ -90,6 +110,11 @@ class DogViewModel(private val dogDAO: DogDAO,
         _recentMoodScores.value = moodScores
     }
 
+    /**
+     * Converts an average mood score into a corresponding color representation.
+     * @param averageMood The average mood score.
+     * @return The color representing the mood score.
+     */
     fun getMoodColor(averageMood: Double): Color {
         val moodColors = listOf(
             Color.Red, // 1 - Very Unhappy
@@ -102,6 +127,12 @@ class DogViewModel(private val dogDAO: DogDAO,
         val roundedMood = averageMood.roundToInt().coerceIn(1, 5)
         return moodColors[roundedMood - 1]
     }
+
+    /**
+     * Converts an average mood score into a corresponding text representation.
+     * @param averageMood The average mood score.
+     * @return The text representing the mood score.
+     */
     fun getMoodText(averageMood: Double): String {
 
         return when (averageMood.roundToInt().coerceIn(1, 5)) {

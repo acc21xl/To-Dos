@@ -32,9 +32,12 @@ import com.example.todo.entities.TypicalTodo
 import com.example.todo.entities.typicalTodos
 import com.example.todo.viewmodels.TodosViewModel
 
-// Display a list of typical todos for user to quickly add to active tasks
 @Composable
 fun TypicalTodos(viewModel: TodosViewModel) {
+    // Displays a list of predefined, typical tasks (e.g. routine dog care tasks: 'Visit Vet')
+    // Users can quickly add these tasks to their active task list
+    // Each task can be clicked to open a dialog for adding it with more details
+
     var showDialog by remember { mutableStateOf(false) }
     var selectedTodo by remember { mutableStateOf<TypicalTodo?>(null) }
 
@@ -76,6 +79,7 @@ fun TypicalTodos(viewModel: TodosViewModel) {
         }
     }
 
+    // This section opens a dialog for adding a typical task with additional details
     if (showDialog) {
         selectedTodo?.let {
             Dialog(onDismissRequest = { showDialog = false }) {
