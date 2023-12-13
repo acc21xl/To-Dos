@@ -54,7 +54,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-// Show user form to input details about new dog or update existing one
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DogForm(
@@ -63,6 +62,8 @@ fun DogForm(
     onDogAdded: ((DogEntity) -> Unit)?,
     existingDog: DogEntity? = null
 ) {
+    // A form for adding or updating details about a dog
+
     var name by remember { mutableStateOf(existingDog?.name.orEmpty()) }
     var breed by remember { mutableStateOf(existingDog?.breed.orEmpty()) }
     var birthday by remember { mutableStateOf(existingDog?.birthdayDate ?: Date()) }
@@ -157,9 +158,11 @@ fun DogForm(
     }
 }
 
-// Circular image picker for dog
 @Composable
 fun DogImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
+    // A clickable, circular image picker allowing the user to capture or select a dog's image
+    // Checks for camera permission and launches the camera when clicked
+
     var hasCameraPermission by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -219,13 +222,15 @@ fun DogImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
     }
 }
 
-// Select date and time
 @Composable
 fun DatePicker(
     context: Context,
     selectedDateTime: Date?,
     onDateTimeSelected: (Date) -> Unit
 ) {
+    // A component for selecting a date and time - opens a date picker dialog,
+    // followed by a time picker dialog to select a full date and time
+
     var showDialog by remember { mutableStateOf(false) }
     val dateTimeString = selectedDateTime?.let {
         SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(it)
@@ -272,8 +277,9 @@ fun DatePicker(
     }
 }
 
-// Convert ByteArray to Bitmap
 fun ByteArray?.asBitmap(): Bitmap? {
+    // Extension method to convert a ByteArray to a Bitmap
+
     return if (this != null && isNotEmpty()) {
         BitmapFactory.decodeByteArray(this, 0, size)
     } else {
@@ -281,8 +287,10 @@ fun ByteArray?.asBitmap(): Bitmap? {
     }
 }
 
-// Ensure required fields are filled out and check for sql injection
 fun validateDogInput(name: String, breed: String, notes: String): Boolean {
+    // Validates the input fields for a dog form. Checks if the fields are not blank
+    // and safe from SQL injection. Returns true if all validations pass.
+
     if (name.isBlank() || !isInputSafe(name)) return false
     if (breed.isBlank() || !isInputSafe(breed)) return false
     if (!isInputSafe(notes)) return false

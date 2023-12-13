@@ -81,7 +81,6 @@ import java.io.ByteArrayOutputStream
 import java.util.Date
 import java.io.ByteArrayInputStream
 
-// A form for users to fill out details about a new task, or update an existing one
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoForm(
@@ -91,6 +90,10 @@ fun TodoForm(
     predefinedTitle: String = "",
     predefinedDescription: String = ""
 ) {
+    // A form to create or update tasks with details like title, description, tags,
+    // priority, and location
+    // Includes validation and permission checks for alarm and notifications
+
     // Assign fields based on whether there is an existing Task supplied or not i.e. if
     // we are doing and update or a create
     var title by remember { mutableStateOf(existingTodo?.title ?: predefinedTitle) }
@@ -403,6 +406,9 @@ fun TodoForm(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TagInput(selectedTags: MutableList<TagEntity>) {
+    // Allows users to add tags to a task
+    // Displays tags as chips which can be removed
+
     var text by remember { mutableStateOf("") }
 
     Column {
@@ -427,9 +433,10 @@ fun TagInput(selectedTags: MutableList<TagEntity>) {
     }
 }
 
-// Chip to display tags as well as remove them
 @Composable
 fun Chip(tag: String, onRemove: () -> Unit) {
+    // A tag as a removable chip within the TagInput component
+
     Row(modifier = Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(text = tag, modifier = Modifier.padding(8.dp))
         IconButton(onClick = onRemove) {
@@ -438,9 +445,11 @@ fun Chip(tag: String, onRemove: () -> Unit) {
     }
 }
 
-// Dropdown to select priority for a task
 @Composable
 fun DropdownPriority(selectedPriority: Priority, onPrioritySelected: (Priority) -> Unit) {
+    // Dropdown for selecting the priority of a task
+    // Displays available priority options from enum
+
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(selectedPriority.name) }
 
@@ -466,10 +475,12 @@ fun DropdownPriority(selectedPriority: Priority, onPrioritySelected: (Priority) 
     }
 }
 
-// Input field only allowing number inputs
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NumberInputField(value: Double, onValueChange: (Double) -> Unit, label: String, width: Dp) {
+    // A text field for numerical input, used for latitude and longitude
+    // Number only keyboard prevents invalid inputs
+
     TextField(
         value = value.toString(),
         onValueChange = { onValueChange(it.toDoubleOrNull() ?: 0.0) },
@@ -481,9 +492,11 @@ fun NumberInputField(value: Double, onValueChange: (Double) -> Unit, label: Stri
     )
 }
 
-// Select images in a banner on top of page
 @Composable
 fun BannerImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
+    // Allows users to capture an image
+    // Checks camera permission before opening the camera.
+
     var hasCameraPermission by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -543,18 +556,23 @@ fun BannerImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
 }
 
 fun bitmapToByteArray(bitmap: Bitmap?): ByteArray {
+    // Converts a Bitmap to a ByteArray for storage
+
     val stream = ByteArrayOutputStream()
     bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
     return stream.toByteArray()
 }
 
 fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
+    // Converts a ByteArray back into a Bitmap for display
+
     val inputStream = ByteArrayInputStream(byteArray)
     return BitmapFactory.decodeStream(inputStream)
 }
 
-// Sql Injection Protection
 fun isInputSafe(input: String): Boolean {
+    // Ensures a given string input does not contain SQL injection patterns
+
     val disallowedPatterns = listOf(
         "';", "--", "/*", "*/", "@@", "@","\"", "\'"
     )
@@ -563,8 +581,10 @@ fun isInputSafe(input: String): Boolean {
     }
 }
 
-// Ensure required fields are entered
 fun validateTodoInput(title: String, description: String): Boolean {
+    // Validates the input fields for a task form, ensuring required fields are filled and safe
+    // from SQL injection
+
     if (title.isBlank() || !isInputSafe(title)) return false
     if (description.isBlank() || !isInputSafe(description)) return false
     return true

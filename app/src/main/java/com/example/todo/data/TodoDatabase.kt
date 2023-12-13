@@ -11,6 +11,12 @@ import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
 import com.example.todo.entities.TodoTagJoin
 
+/**
+ * Main database setup for the application.
+ * This abstract class extends RoomDatabase and declares all the DAOs and entities used in the app
+ * It also includes methods to build the database instance
+ */
+
 @Database(entities = [TodoEntity::class, DogEntity::class, TagEntity::class, TodoTagJoin::class], version = 10, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class TodoDatabase : RoomDatabase() {

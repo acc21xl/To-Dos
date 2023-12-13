@@ -4,6 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
 
+/**
+ * This data class defines the schema of a dog table in the Room database
+ * The primary key is set to auto-generate, meaning the ID will be automatically generated
+ * and incremented
+ */
+
 @Entity(tableName = DogEntity.TABLE_NAME)
 data class DogEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

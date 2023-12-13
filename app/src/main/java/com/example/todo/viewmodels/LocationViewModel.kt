@@ -7,6 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 
+/**
+ * ViewModel for managing location data it extends AndroidViewModel and is responsible for
+ * storing and updating the device's current location
+ * The ViewModel provides methods for updating the current location, clearing it, and checking if
+ * the current location is valid.
+ * It also includes a utility method for calculating
+ * the distance between two geographic points
+ */
 class LocationViewModel (app: Application): AndroidViewModel(app) {
     var location:Location? by mutableStateOf<Location?>(null)
         private set

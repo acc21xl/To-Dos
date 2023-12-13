@@ -43,9 +43,11 @@ import com.example.todo.enums.Priority
 import com.example.todo.TaskRow
 import com.example.todo.entities.TodoEntity
 
-// Show all currently active todos to be completed
 @Composable
 fun ActiveTodos(todosViewModel: TodosViewModel) {
+    // Displays a list of active tasks grouped by priority
+    // Allows for task interactions such as marking as complete, editing, and deleting
+
     val activeTasks by todosViewModel.activeTasks.collectAsState()
     var showMoodDialog by remember { mutableStateOf(false) }
     var showTodoFormDialog by remember { mutableStateOf(false) }
@@ -170,7 +172,6 @@ fun ActiveTodos(todosViewModel: TodosViewModel) {
     }
 }
 
-// Show tasks within groups of priority in dropdown drawers (Highest open by default)
 @Composable
 fun PriorityDrawer(
     priority: Priority,
@@ -181,6 +182,10 @@ fun PriorityDrawer(
     onVisibilityClicked: (TodoEntity) -> Unit,
     onDeleteTask: (TodoEntity) -> Unit
 ) {
+    // A collapsible drawer displaying tasks of a specific priority
+    // Includes functionality for expanding/collapsing the task list
+    // Highest priority open by default
+
     var isExpanded by remember { mutableStateOf(isInitiallyExpanded) }
 
     Column {
@@ -213,9 +218,11 @@ fun PriorityDrawer(
     }
 }
 
-// Badge for top of drawers to show how many tasks still need to be completed for each priority
 @Composable
 fun AlertBadge(count: Int) {
+    // Displays a small badge with the count of tasks
+    // Can see the number of tasks in a PriorityDrawer without needing to open it
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -230,6 +237,9 @@ fun AlertBadge(count: Int) {
 @Composable
 fun MoodSelectorDialog(onMoodSelected: (MoodScore) -> Unit, onSubmit: () -> Unit,
                        onDismiss: () -> Unit) {
+    // Shows a dialog for selecting the mood score of a dog
+    // Includes a slider for choosing the mood
+
     var sliderPosition by remember { mutableFloatStateOf(3f) }
     val scrollState = rememberScrollState()
 
@@ -262,9 +272,11 @@ fun MoodSelectorDialog(onMoodSelected: (MoodScore) -> Unit, onSubmit: () -> Unit
     )
 }
 
-// Allow for selecting mood of dog for a given task
 @Composable
 fun MoodSelector(sliderPosition: Float, onSliderPositionChanged: (Float) -> Unit) {
+    // Allows the user to select the dog's mood using a slider
+    // Displays the title of the selected mood
+
     Column {
         Text("Select Mood: ${getMoodFromSliderPosition(sliderPosition.toInt()).name}")
         Slider(
@@ -276,9 +288,11 @@ fun MoodSelector(sliderPosition: Float, onSliderPositionChanged: (Float) -> Unit
     }
 }
 
-// Get confirmation before hard delete
 @Composable
 fun ConfirmDeleteDialog(task: TodoEntity, onConfirm: (TodoEntity) -> Unit, onDismiss: () -> Unit) {
+    // Presents a confirmation dialog before deleting a task
+    // Helps prevent accidental deletions
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Confirm Delete") },
@@ -297,6 +311,7 @@ fun ConfirmDeleteDialog(task: TodoEntity, onConfirm: (TodoEntity) -> Unit, onDis
 }
 
 fun getMoodFromSliderPosition(position: Int): MoodScore {
+    // Converts a slider position to a corresponding MoodScore enum value
     return when (position) {
         1 -> MoodScore.UPSET
         2 -> MoodScore.SAD

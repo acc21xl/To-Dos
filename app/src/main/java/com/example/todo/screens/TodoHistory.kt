@@ -26,9 +26,12 @@ import com.example.todo.TaskRow
 import com.example.todo.entities.TodoEntity
 import com.example.todo.viewmodels.TodosViewModel
 
-// Show all completed tasks
 @Composable
 fun TodoHistory(todosViewModel: TodosViewModel) {
+    // Displays a list of all completed tasks and provides options to view, edit,
+    // and delete completed tasks
+    // Also includes mood selection for completed tasks
+
     val completedTasks by todosViewModel.completedTasks.collectAsState()
     var showMoodDialog by remember { mutableStateOf(false) }
     var showTodoFormDialog by remember { mutableStateOf(false) }
@@ -76,6 +79,7 @@ fun TodoHistory(todosViewModel: TodosViewModel) {
         }
     }
 
+    // This section shows a confirmation dialog before deleting a task
     if (showDeleteConfirmDialog && taskToDelete != null) {
         ConfirmDeleteDialog(task = taskToDelete!!, onConfirm = {
             todosViewModel.deleteTask(it.id.toLong())
@@ -87,6 +91,7 @@ fun TodoHistory(todosViewModel: TodosViewModel) {
         })
     }
 
+    // This section handles mood selection for a completed task
     if (showMoodDialog) {
         MoodSelectorDialog(
             onMoodSelected = { mood ->
@@ -104,6 +109,7 @@ fun TodoHistory(todosViewModel: TodosViewModel) {
         )
     }
 
+    // This section opens a dialog for editing a task's details
     if (showTodoFormDialog) {
         Dialog(onDismissRequest = { showTodoFormDialog = false }) {
             currentTask?.let {
@@ -127,6 +133,7 @@ fun TodoHistory(todosViewModel: TodosViewModel) {
         }
     }
 
+    // This section opens a dialog for editing a task's details
     if (showTodoDisplayDialog) {
         Dialog(onDismissRequest = { showTodoDisplayDialog = false }) {
             currentTask?.let {
