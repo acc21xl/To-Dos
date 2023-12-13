@@ -42,7 +42,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -50,16 +49,15 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.todo.entities.DogEntity
 import com.example.todo.viewmodels.DogViewModel
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import com.example.todo.screens.TodoForm
 
+// Show user form to input details about new dog or update existing one
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddDogScreen(
+fun DogForm(
     viewModel: DogViewModel,
     navController: NavController,
     onDogAdded: ((DogEntity) -> Unit)?,
@@ -69,14 +67,14 @@ fun AddDogScreen(
     var breed by remember { mutableStateOf(existingDog?.breed.orEmpty()) }
     var birthday by remember { mutableStateOf(existingDog?.birthdayDate ?: Date()) }
     var notes by remember { mutableStateOf(existingDog?.notes.orEmpty()) }
-    var imageBitmap by remember { mutableStateOf<Bitmap?>(existingDog?.imageBytes?.asBitmap()) }
+    var imageBitmap by remember { mutableStateOf(existingDog?.imageBytes?.asBitmap()) }
 
-    // Use the provided existingDog details to initialize form fields
+    // Use existingDog details to set fields (if passed)
     LaunchedEffect(existingDog) {
         existingDog?.let {
             name = it.name
             breed = it.breed
-            birthday = it.birthdayDate ?: Date()
+            birthday = it.birthdayDate
             notes = it.notes
         }
     }
@@ -125,14 +123,6 @@ fun AddDogScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        val buttonScope = rememberCoroutineScope()
-        //val dao = TodoDatabase.(LocalContext.current).dogDao()
-        fun insertOnClick(dog: DogEntity) {
-            buttonScope.launch {
-                //dao.insert(dog)
-            }
-        }
-
         Button(
             onClick = {
                 // Convert the Bitmap to ByteArray
@@ -166,6 +156,8 @@ fun AddDogScreen(
         }
     }
 }
+
+// Circular image picker for dog
 @Composable
 fun DogImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
     var hasCameraPermission by remember { mutableStateOf(false) }
@@ -227,6 +219,7 @@ fun DogImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
     }
 }
 
+// Select date and time
 @Composable
 fun DatePicker(
     context: Context,
@@ -269,7 +262,7 @@ fun DatePicker(
                     },
                     hour,
                     minute,
-                    true // Use 24-hour format
+                    true // Use 24-hour
                 ).show()
             },
             year,
@@ -278,6 +271,7 @@ fun DatePicker(
         ).show()
     }
 }
+
 // Convert ByteArray to Bitmap
 fun ByteArray?.asBitmap(): Bitmap? {
     return if (this != null && isNotEmpty()) {
@@ -287,6 +281,7 @@ fun ByteArray?.asBitmap(): Bitmap? {
     }
 }
 
+// Ensure required fields are filled out and check for sql injection
 fun validateDogInput(name: String, breed: String, notes: String): Boolean {
     if (name.isBlank() || !isInputSafe(name)) return false
     if (breed.isBlank() || !isInputSafe(breed)) return false

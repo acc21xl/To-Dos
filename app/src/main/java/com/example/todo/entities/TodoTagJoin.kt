@@ -10,6 +10,7 @@ import androidx.room.Index
         ForeignKey(entity = TodoEntity::class,
             parentColumns = ["id"],
             childColumns = ["todoId"]),
+
         ForeignKey(entity = TagEntity::class,
             parentColumns = ["id"],
             childColumns = ["tagId"])

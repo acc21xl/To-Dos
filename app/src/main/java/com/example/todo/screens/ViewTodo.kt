@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun TodoDisplay(
+fun ViewTodo(
     viewModel: TodosViewModel,
     todo: TodoEntity
 ) {
@@ -76,7 +76,7 @@ fun TodoDisplay(
 
                 if (locationViewModel?.valid() == true) {
                     calculatedDistance?.let {
-                        Text("Distance: ${it} meters", style = MaterialTheme.typography.bodyMedium)
+                        Text("Distance: $it meters", style = MaterialTheme.typography.bodyMedium)
                     }
                 } else {
                     Text("Distance: Location Permission is not granted", style = MaterialTheme.typography.bodyMedium)

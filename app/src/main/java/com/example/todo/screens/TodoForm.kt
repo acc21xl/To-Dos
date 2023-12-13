@@ -2,7 +2,6 @@ package com.example.todo.screens
 
 import android.Manifest
 import android.app.AlarmManager
-import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,13 +11,11 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
-import android.widget.DatePicker
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -79,16 +76,12 @@ import com.example.todo.MyNotification
 import com.example.todo.entities.TagEntity
 import com.example.todo.entities.TodoEntity
 import com.example.todo.enums.PermissionStatus
-import com.example.todo.services.GeoLocationService.locationViewModel
 import com.example.todo.viewmodels.TodosViewModel
 import java.io.ByteArrayOutputStream
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 import java.io.ByteArrayInputStream
 
-
+// A form for users to fill out details about a new task, or update an existing one
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoForm(
@@ -98,9 +91,13 @@ fun TodoForm(
     predefinedTitle: String = "",
     predefinedDescription: String = ""
 ) {
+    // Assign fields based on whether there is an existing Task supplied or not i.e. if
+    // we are doing and update or a create
     var title by remember { mutableStateOf(existingTodo?.title ?: predefinedTitle) }
-    var description by remember { mutableStateOf(existingTodo?.description ?: predefinedDescription) }
-    val existingTags by viewModel.getTagsForTodo(existingTodo?.id?.toLong() ?: -1).collectAsState(initial = emptyList())
+    var description by remember { mutableStateOf(existingTodo?.description
+        ?: predefinedDescription) }
+    val existingTags by viewModel.getTagsForTodo(existingTodo?.id?.toLong() ?: -1)
+        .collectAsState(initial = emptyList())
     val selectedTags = remember { mutableStateListOf<TagEntity>() }
     LaunchedEffect(existingTags) {
         selectedTags.clear()
@@ -109,15 +106,16 @@ fun TodoForm(
     var priority by remember { mutableStateOf( existingTodo?.priority ?: Priority.LOW) }
     var latitude by remember { mutableDoubleStateOf( existingTodo?.latitude ?: 0.0) }
     var longitude by remember { mutableDoubleStateOf( existingTodo?.longitude ?: 0.0) }
-//    var distance by remember { mutableDoubleStateOf( existingTodo?.distance ?: 0.0) }
-    var toCompleteByDate by remember { mutableStateOf( existingTodo?.toCompleteByDate ?: Date()) }
+    var toCompleteByDate by remember { mutableStateOf(existingTodo?.toCompleteByDate
+        ?: Date()) }
     var imageBytes by remember { mutableStateOf(existingTodo?.imageBytes) }
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var showNotificationPermissionDialog by remember { mutableStateOf(false) }
     var showAlarmPermissionDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(showNotificationPermissionDialog, showAlarmPermissionDialog) {
-        Log.d("TodoForm", "Dialog states changed. Notification: $showNotificationPermissionDialog, Alarm: $showAlarmPermissionDialog")
+        Log.d("TodoForm", "Dialog states changed. Notification: " +
+                "$showNotificationPermissionDialog, Alarm: $showAlarmPermissionDialog")
     }
 
     LaunchedEffect(existingTodo) {
@@ -134,7 +132,8 @@ fun TodoForm(
             true
         }
 
-        val hasNotificationPermission = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        val hasNotificationPermission =
+            NotificationManagerCompat.from(context).areNotificationsEnabled()
 
         return when {
             hasAlarmPermission && hasNotificationPermission -> PermissionStatus.BOTH_GRANTED
@@ -176,20 +175,19 @@ fun TodoForm(
         }
         context.startActivity(intent)
     }
-    // Submit the data and close the form after all permissions have been granted.
 
+    // Submit the data and close the form
     fun submitTodoAndNavigateAway() {
         val newTodo = TodoEntity(
             id = existingTodo?.id ?: 0,
             title = title,
             description = description,
-            dogId = 0, // Filled out later
+            dogId = 0, // Assigned on submit
             moodScore = null,
             priority = priority,
             status = Status.ONGOING,
             latitude = latitude,
             longitude = longitude,
-//            distance = calculatedDistance,
             isCompleted = false,
             toCompleteByDate = toCompleteByDate,
             creationDate = Date(),
@@ -208,7 +206,7 @@ fun TodoForm(
         onClose()
     }
 
-
+    // Form for creating / updating todos
     Column(modifier = Modifier.fillMaxSize()) {
         BannerImagePicker(imageBitmap) { newBitmap ->
             imageBitmap = newBitmap
@@ -274,12 +272,6 @@ fun TodoForm(
                         label = "Longitude",
                         width = fieldWidth
                     )
-//                    NumberInputField(
-//                        value = distance,
-//                        onValueChange = { distance = it },
-//                        label = "Distance",
-//                        width = fieldWidth
-//                    )
                 }
             }
 
@@ -310,16 +302,21 @@ fun TodoForm(
                             }
                             PermissionStatus.ALARM_DENIED -> {
                                 // Alarm permission denied, guide user to alarm permission settings
-//                                navigateToExactAlarmPermissionSettings()
+                                // navigateToExactAlarmPermissionSettings()
                                 Log.d("TodoForm", "Alarm permission denied. Showing dialog.")
                                 showAlarmPermissionDialog = true
-                                Log.d("TodoForm","Alarm Dialog: $showAlarmPermissionDialog, Notification Dialog: $showNotificationPermissionDialog")
+                                Log.d("TodoForm","Alarm Dialog: " +
+                                        "$showAlarmPermissionDialog, Notification Dialog: " +
+                                        "$showNotificationPermissionDialog")
                             }
                             PermissionStatus.NOTIFICATION_DENIED -> {
-                                /// Notification permission denied, guide user to notification settings
-                                Log.d("TodoForm", "Notification permission denied. Showing dialog.")
+                                // Notification permission denied, guide user to notification settings
+                                Log.d("TodoForm", "Notification permission denied. " +
+                                        "Showing dialog.")
                                 showNotificationPermissionDialog = true
-                                Log.d("TodoForm","Alarm Dialog: $showAlarmPermissionDialog, Notification Dialog: $showNotificationPermissionDialog")
+                                Log.d("TodoForm","Alarm Dialog: " +
+                                        "$showAlarmPermissionDialog, " +
+                                        "Notification Dialog: $showNotificationPermissionDialog")
 
                             }
                             PermissionStatus.BOTH_DENIED -> {
@@ -341,7 +338,8 @@ fun TodoForm(
                     AlertDialog(
                         onDismissRequest = { showNotificationPermissionDialog = false },
                         title = { Text("Notification Permission Required") },
-                        text = { Text("This app requires notification permission to function properly. Please enable them in the app settings.") },
+                        text = { Text("This app requires notification permission to " +
+                                "function properly. Please enable them in the app settings.") },
                         confirmButton = {
                             Button(
                                 onClick = {
@@ -371,7 +369,8 @@ fun TodoForm(
                             showAlarmPermissionDialog = false
                         },
                         title = { Text("Alarm Permission Required") },
-                        text = { Text("This app needs alarm permission to continue. Would you like to open settings to enable alarm permission?") },
+                        text = { Text("This app needs alarm permission to continue. " +
+                                "Would you like to open settings to enable alarm permission?") },
                         confirmButton = {
                             Button(
                                 onClick = {
@@ -428,6 +427,7 @@ fun TagInput(selectedTags: MutableList<TagEntity>) {
     }
 }
 
+// Chip to display tags as well as remove them
 @Composable
 fun Chip(tag: String, onRemove: () -> Unit) {
     Row(modifier = Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -438,7 +438,7 @@ fun Chip(tag: String, onRemove: () -> Unit) {
     }
 }
 
-
+// Dropdown to select priority for a task
 @Composable
 fun DropdownPriority(selectedPriority: Priority, onPrioritySelected: (Priority) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
@@ -466,9 +466,7 @@ fun DropdownPriority(selectedPriority: Priority, onPrioritySelected: (Priority) 
     }
 }
 
-
-
-
+// Input field only allowing number inputs
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NumberInputField(value: Double, onValueChange: (Double) -> Unit, label: String, width: Dp) {
@@ -483,40 +481,7 @@ fun NumberInputField(value: Double, onValueChange: (Double) -> Unit, label: Stri
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DateInput(label: String, date: Date?, onDateChanged: (Date) -> Unit) {
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
-    date?.let { calendar.time = it }
-
-    val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
-    val dateString = if (date != null) dateFormat.format(date) else "Select Date"
-
-    TextField(
-        value = dateString,
-        onValueChange = {},
-        readOnly = true,
-        label = { Text(label) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }) {
-                DatePickerDialog(
-                    context,
-                    { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                        calendar.set(year, month, dayOfMonth)
-                        onDateChanged(calendar.time)
-                    },
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
-                ).show()
-            }
-    )
-}
-
+// Select images in a banner on top of page
 @Composable
 fun BannerImagePicker(imageBitmap: Bitmap?, onImageCaptured: (Bitmap) -> Unit) {
     var hasCameraPermission by remember { mutableStateOf(false) }
@@ -588,6 +553,7 @@ fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
     return BitmapFactory.decodeStream(inputStream)
 }
 
+// Sql Injection Protection
 fun isInputSafe(input: String): Boolean {
     val disallowedPatterns = listOf(
         "';", "--", "/*", "*/", "@@", "@","\"", "\'"
@@ -597,6 +563,7 @@ fun isInputSafe(input: String): Boolean {
     }
 }
 
+// Ensure required fields are entered
 fun validateTodoInput(title: String, description: String): Boolean {
     if (title.isBlank() || !isInputSafe(title)) return false
     if (description.isBlank() || !isInputSafe(description)) return false

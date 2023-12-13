@@ -17,10 +17,8 @@ object GeoLocationService: LocationListener {
     private var todoDatabase: TodoDatabase? = null
 
     fun initialiseService(ctx: Context) {
-        // Assign the application context to a local variable first
         val appContext = ctx.applicationContext
-        context = appContext // Assign the application context to the static variable
-        // Use the local variable to initialize the database
+        context = appContext
         todoDatabase = TodoDatabase.getInstance(appContext)
     }
 
@@ -57,7 +55,7 @@ object GeoLocationService: LocationListener {
                     val distance = currentLocation.distanceTo(todoLocation)
                     if (distance < 500) {
                         context?.let { ctx ->
-                            MyNotification(ctx, "Nearby TODO", "You are within 500m of ${todo.title}").FirNotification()
+                            MyNotification(ctx, "Nearby TODO", "You are within 500m of ${todo.title}").forNotification()
                         }
                     }
                 }

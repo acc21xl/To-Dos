@@ -3,31 +3,24 @@ package com.example.todo
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
-import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.os.Build
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
 import androidx.core.app.NotificationCompat
-import java.lang.StringBuilder
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import com.example.todo.data.TodoDAO
 
 class MyNotification(var context:Context, var title: String, var msg:String) {
-    val channelID:String = "FCM100"
-    val channelName:String = "FCMMessage"
-    val notificationManager = context.applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    lateinit var notificationChannel: NotificationChannel
-    lateinit var notificationBuilder: NotificationCompat.Builder
-    val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
+    private val channelID:String = "FCM100"
+    private val channelName:String = "FCMMessage"
+    private val notificationManager = context.applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private lateinit var notificationChannel: NotificationChannel
+    private lateinit var notificationBuilder: NotificationCompat.Builder
+    private val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
 
-    fun FirNotification(){
+    @SuppressLint("ObsoleteSdkInt")
+    fun forNotification(){
         if (Build.VERSION.SDK_INT >= 26){
             notificationChannel = NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH)
             notificationManager.createNotificationChannel(notificationChannel)
@@ -41,12 +34,7 @@ class MyNotification(var context:Context, var title: String, var msg:String) {
         notificationBuilder.setContentText(msg)
         notificationBuilder.setAutoCancel(true)
         notificationManager.notify(100, notificationBuilder.build())
-
-
-
-
     }
-
 
     @SuppressLint("ScheduleExactAlarm")
     fun scheduleNotification(timeInMillis: Long) {

@@ -43,8 +43,9 @@ import com.example.todo.enums.Priority
 import com.example.todo.TaskRow
 import com.example.todo.entities.TodoEntity
 
+// Show all currently active todos to be completed
 @Composable
-fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
+fun ActiveTodos(todosViewModel: TodosViewModel) {
     val activeTasks by todosViewModel.activeTasks.collectAsState()
     var showMoodDialog by remember { mutableStateOf(false) }
     var showTodoFormDialog by remember { mutableStateOf(false) }
@@ -53,10 +54,8 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
     var currentTask by remember { mutableStateOf<TodoEntity?>(null) }
     val tasksGroupedByPriority = activeTasks.groupBy { it.priority }.toSortedMap(reverseOrder())
     val highestPriority = tasksGroupedByPriority.keys.firstOrNull()
-    val scrollState = rememberScrollState()
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var taskToDelete by remember { mutableStateOf<TodoEntity?>(null) }
-
 
     Column {
         Text(
@@ -64,37 +63,37 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(8.dp)
         )
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        tasksGroupedByPriority.forEach { (priority, tasks) ->
-            item {
-                PriorityDrawer(
-                    priority = priority,
-                    tasks = tasks,
-                    isInitiallyExpanded = priority == highestPriority,
-                    onTaskCheckedChange = { task, isChecked ->
-                        if (isChecked) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            tasksGroupedByPriority.forEach { (priority, tasks) ->
+                item {
+                    PriorityDrawer(
+                        priority = priority,
+                        tasks = tasks,
+                        isInitiallyExpanded = priority == highestPriority,
+                        onTaskCheckedChange = { task, isChecked ->
+                            if (isChecked) {
+                                currentTask = task
+                                showMoodDialog = true
+                            } else {
+                                todosViewModel.updateTask(task.copy(isCompleted = false))
+                            }
+                        },
+                        onTaskClicked = { task ->
                             currentTask = task
-                            showMoodDialog = true
-                        } else {
-                            todosViewModel.updateTask(task.copy(isCompleted = false))
+                            showTodoFormDialog = true
+                        },
+                        onVisibilityClicked = { task ->
+                            currentTask = task
+                            showTodoDisplayDialog = true
+                        },
+                        onDeleteTask = { task ->
+                            taskToDelete = task
+                            showDeleteConfirmDialog = true
                         }
-                    },
-                    onTaskClicked = { task ->
-                        currentTask = task
-                        showTodoFormDialog = true
-                    },
-                    onVisibilityClicked = { task ->
-                        currentTask = task
-                        showTodoDisplayDialog = true
-                    },
-                    onDeleteTask = { task ->
-                        taskToDelete = task
-                        showDeleteConfirmDialog = true
-                    }
-                )
+                    )
+                }
             }
         }
-    }
     }
 
     if (showDeleteConfirmDialog && taskToDelete != null) {
@@ -151,7 +150,6 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
     if (showTodoDisplayDialog) {
         Dialog(onDismissRequest = { showTodoDisplayDialog = false }) {
             currentTask?.let {
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -162,7 +160,7 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
                         containerColor = MaterialTheme.colorScheme.surface
                     )
                 ) {
-                    TodoDisplay(
+                    ViewTodo(
                         viewModel = todosViewModel,
                         todo = it
                     )
@@ -172,6 +170,7 @@ fun ActiveTasksScreen(todosViewModel: TodosViewModel) {
     }
 }
 
+// Show tasks within groups of priority in dropdown drawers (Highest open by default)
 @Composable
 fun PriorityDrawer(
     priority: Priority,
@@ -191,11 +190,13 @@ fun PriorityDrawer(
             AlertBadge(count = tasks.size)
             IconButton(onClick = { isExpanded = !isExpanded }) {
                 Icon(
-                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp
+                    else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (isExpanded) "Collapse" else "Expand"
                 )
             }
-            Text(text = "${priority.name} PRIORITY TASKS", style = MaterialTheme.typography.labelMedium)
+            Text(text = "${priority.name} PRIORITY TASKS",
+                style = MaterialTheme.typography.labelMedium)
         }
 
         if (isExpanded) {
@@ -212,6 +213,7 @@ fun PriorityDrawer(
     }
 }
 
+// Badge for top of drawers to show how many tasks still need to be completed for each priority
 @Composable
 fun AlertBadge(count: Int) {
     Box(
@@ -220,13 +222,15 @@ fun AlertBadge(count: Int) {
             .size(24.dp)
             .background(Color.Red, shape = CircleShape)
     ) {
-        Text(text = count.toString(), color = Color.White, style = MaterialTheme.typography.bodyMedium)
+        Text(text = count.toString(), color = Color.White,
+            style = MaterialTheme.typography.bodyMedium)
     }
 }
 
 @Composable
-fun MoodSelectorDialog(onMoodSelected: (MoodScore) -> Unit, onSubmit: () -> Unit, onDismiss: () -> Unit) {
-    var sliderPosition by remember { mutableStateOf(3f) }
+fun MoodSelectorDialog(onMoodSelected: (MoodScore) -> Unit, onSubmit: () -> Unit,
+                       onDismiss: () -> Unit) {
+    var sliderPosition by remember { mutableFloatStateOf(3f) }
     val scrollState = rememberScrollState()
 
     AlertDialog(
@@ -258,6 +262,7 @@ fun MoodSelectorDialog(onMoodSelected: (MoodScore) -> Unit, onSubmit: () -> Unit
     )
 }
 
+// Allow for selecting mood of dog for a given task
 @Composable
 fun MoodSelector(sliderPosition: Float, onSliderPositionChanged: (Float) -> Unit) {
     Column {
@@ -271,6 +276,7 @@ fun MoodSelector(sliderPosition: Float, onSliderPositionChanged: (Float) -> Unit
     }
 }
 
+// Get confirmation before hard delete
 @Composable
 fun ConfirmDeleteDialog(task: TodoEntity, onConfirm: (TodoEntity) -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
@@ -289,7 +295,6 @@ fun ConfirmDeleteDialog(task: TodoEntity, onConfirm: (TodoEntity) -> Unit, onDis
         }
     )
 }
-
 
 fun getMoodFromSliderPosition(position: Int): MoodScore {
     return when (position) {
