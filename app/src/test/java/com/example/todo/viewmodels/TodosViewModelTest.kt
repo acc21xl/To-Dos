@@ -1,7 +1,6 @@
 package com.example.todo.viewmodels
 
 import com.example.todo.data.DogDAO
-import com.example.todo.data.TagDAO
 import com.example.todo.data.TodoDAO
 import com.example.todo.entities.DogEntity
 import com.example.todo.entities.TagEntity
