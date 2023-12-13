@@ -1,6 +1,5 @@
 package com.example.todo.screens
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,8 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -29,16 +26,15 @@ import com.example.todo.TaskRow
 import com.example.todo.entities.TodoEntity
 import com.example.todo.viewmodels.TodosViewModel
 
-
+// Show all completed tasks
 @Composable
-fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
+fun TodoHistory(todosViewModel: TodosViewModel) {
     val completedTasks by todosViewModel.completedTasks.collectAsState()
     var showMoodDialog by remember { mutableStateOf(false) }
     var showTodoFormDialog by remember { mutableStateOf(false) }
     var showTodoDisplayDialog by remember { mutableStateOf(false) }
     var selectedMood by remember { mutableStateOf(MoodScore.NEUTRAL) }
     var currentTask by remember { mutableStateOf<TodoEntity?>(null) }
-    val scrollState = rememberScrollState()
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var taskToDelete by remember { mutableStateOf<TodoEntity?>(null) }
 
@@ -144,7 +140,7 @@ fun CompletedTasksHistoryScreen(todosViewModel: TodosViewModel) {
                         containerColor = MaterialTheme.colorScheme.surface
                     )
                 ) {
-                    TodoDisplay(
+                    ViewTodo(
                         viewModel = todosViewModel,
                         todo = it
                     )

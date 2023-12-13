@@ -9,11 +9,21 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4bf3d0c6-d9c8-41d6-b77a-e677f9248352" name="Changes" comment=".name">
+    <list default="true" id="4bf3d0c6-d9c8-41d6-b77a-e677f9248352" name="Changes" comment="Big Code cleanup">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/AlarmReceiver.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/AlarmReceiver.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/MyNotification.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/MyNotification.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ActiveTasksScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ActiveTodos.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/CreateDogActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/DogForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/DogDetailsScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ViewDog.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TaskHistoryScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TodoHistory.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TodoForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TodoForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TypicalTodos.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/TypicalTodos.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ViewTodo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/screens/ViewTodo.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/services/GeoLocationService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/services/GeoLocationService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/DogViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/DogViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/LocationViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/LocationViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +33,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Lenovo\.android\avd\Pixel_6_API_34.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\harry\.android\avd\Pixel_6_API_33.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -112,7 +122,7 @@
       <recent name="com.example.todo.services" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.LocationViewModelTest">
+  <component name="RunManager" selected="Android App.app">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="Todo.app.main" />
       <option name="DEPLOY" value="true" />
@@ -123,7 +133,6 @@
       <option name="ALL_USERS" value="false" />
       <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
       <option name="CLEAR_APP_STORAGE" value="false" />
-      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="CLEAR_LOGCAT" value="false" />
@@ -199,7 +208,6 @@
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
     <configuration name="DogViewModelTest.createDog throws exception on DAO failure" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -223,7 +231,6 @@
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
     <configuration name="LocationViewModelTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -247,7 +254,6 @@
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
     <configuration name="TodosViewModelTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -271,7 +277,6 @@
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
     <configuration name="TodosViewModelTest.submitTodo invokes DAO insert method" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -295,7 +300,6 @@
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -408,6 +412,7 @@
     <MESSAGE value="Added scrollability and time to todos" />
     <MESSAGE value="Added delete confirmation" />
     <MESSAGE value="Protect against sql injection" />
-    <option name="LAST_COMMIT_MESSAGE" value="Protect against sql injection" />
+    <MESSAGE value="Big Code cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="Big Code cleanup" />
   </component>
 </project>
