@@ -11,7 +11,8 @@
   <component name="ChangeListManager">
     <list default="true" id="4bf3d0c6-d9c8-41d6-b77a-e677f9248352" name="Changes" comment=".name">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/todo/viewmodels/LocationViewModelTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/todo/viewmodels/LocationViewModelTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/MoodViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/todo/viewmodels/MoodViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,27 +92,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "PROJECT_TRUSTED_KEY": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "com.android.tools.idea.devicemanager.tab": "Physical",
-    "com.google.services.firebase.aqiPopupShown": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Lenovo/AndroidStudioProjects/GeoLocation",
-    "settings.editor.selected.configurable": "experimental"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.android.tools.idea.devicemanager.tab&quot;: &quot;Physical&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lenovo/AndroidStudioProjects/GeoLocation&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;experimental&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
       <recent name="com.example.todo.services" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.DogViewModelTest">
+  <component name="RunManager" selected="Gradle.DogDAOTest">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="Todo.app.main" />
       <option name="DEPLOY" value="true" />
@@ -177,7 +178,7 @@
       <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
       <method v="2" />
     </configuration>
-    <configuration name="DogViewModelTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="DogDAOTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -190,7 +191,7 @@
           <list>
             <option value=":app:testDebugUnitTest" />
             <option value="--tests" />
-            <option value="&quot;com.example.todo.viewmodels.DogViewModelTest&quot;" />
+            <option value="&quot;com.example.todo.data.DogDAOTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -201,7 +202,7 @@
       <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration name="DogViewModelTest.createDog throws exception on DAO failure" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="DogDAOTest.deleteDog" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -214,7 +215,7 @@
           <list>
             <option value=":app:testDebugUnitTest" />
             <option value="--tests" />
-            <option value="&quot;com.example.todo.viewmodels.DogViewModelTest.createDog throws exception on DAO failure&quot;" />
+            <option value="&quot;com.example.todo.data.DogDAOTest.deleteDog&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -225,7 +226,7 @@
       <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration name="LocationViewModelTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="DogDAOTest.getAllDogs" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -238,7 +239,7 @@
           <list>
             <option value=":app:testDebugUnitTest" />
             <option value="--tests" />
-            <option value="&quot;com.example.todo.viewmodels.LocationViewModelTest&quot;" />
+            <option value="&quot;com.example.todo.data.DogDAOTest.getAllDogs&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -249,7 +250,7 @@
       <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration name="TodosViewModelTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="DogDAOTest.insertAndGetDog" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -262,7 +263,7 @@
           <list>
             <option value=":app:testDebugUnitTest" />
             <option value="--tests" />
-            <option value="&quot;com.example.todo.viewmodels.TodosViewModelTest&quot;" />
+            <option value="&quot;com.example.todo.data.DogDAOTest.insertAndGetDog&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -273,7 +274,7 @@
       <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration name="TodosViewModelTest.submitTodo invokes DAO insert method" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="DogDAOTest.updateDog" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -286,7 +287,7 @@
           <list>
             <option value=":app:testDebugUnitTest" />
             <option value="--tests" />
-            <option value="&quot;com.example.todo.viewmodels.TodosViewModelTest.submitTodo invokes DAO insert method&quot;" />
+            <option value="&quot;com.example.todo.data.DogDAOTest.updateDog&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -299,11 +300,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.DogViewModelTest" />
-        <item itemvalue="Gradle.LocationViewModelTest" />
-        <item itemvalue="Gradle.TodosViewModelTest" />
-        <item itemvalue="Gradle.TodosViewModelTest.submitTodo invokes DAO insert method" />
-        <item itemvalue="Gradle.DogViewModelTest.createDog throws exception on DAO failure" />
+        <item itemvalue="Gradle.DogDAOTest" />
+        <item itemvalue="Gradle.DogDAOTest.getAllDogs" />
+        <item itemvalue="Gradle.DogDAOTest.deleteDog" />
+        <item itemvalue="Gradle.DogDAOTest.updateDog" />
+        <item itemvalue="Gradle.DogDAOTest.insertAndGetDog" />
       </list>
     </recent_temporary>
   </component>

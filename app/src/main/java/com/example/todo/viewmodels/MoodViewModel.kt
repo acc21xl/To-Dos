@@ -31,7 +31,7 @@ class MoodViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
         loadDog()
     }
 
-    private fun loadCompletedTasks() {
+    fun loadCompletedTasks() {
         viewModelScope.launch {
             todoDAO.getCompletedTodos().collect { listOfCompletedTodos ->
                 _completedTasks.value = listOfCompletedTodos
@@ -40,7 +40,7 @@ class MoodViewModel(private val todoDAO: TodoDAO, private val dogDAO: DogDAO,
     }
 
 
-    private fun loadDog() {
+    fun loadDog() {
         viewModelScope.launch {
             val dogs = dogDAO.getAllDogs().first()
             dog.value = dogs.firstOrNull()

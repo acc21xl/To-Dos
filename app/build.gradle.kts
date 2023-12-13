@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.test.ext:junit-ktx:1.1.5")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -77,7 +78,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.0.0-beta01")
     implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
     implementation ("androidx.work:work-runtime-ktx:2.7.1")
-    // Unit testing dependencies
     testImplementation ("junit:junit:4.13.2")
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
     testImplementation ("io.mockk:mockk:1.12.0")
@@ -85,9 +85,11 @@ dependencies {
     testImplementation ("org.mockito:mockito-core:3.3.3")
     testImplementation(kotlin("test"))
     testImplementation ("org.robolectric:robolectric:4.9.2")
-    // Android Instrumentation Tests
+    testImplementation ("androidx.room:room-testing:$room_version")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
+
 
 
 
