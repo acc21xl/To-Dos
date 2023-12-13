@@ -30,6 +30,10 @@ fun ViewTodo(
     viewModel: TodosViewModel,
     todo: TodoEntity
 ) {
+    // Displays detailed information about a specific task, including title, description,
+    // priority, tags, location, and an image (if available)
+    // Calculates the distance to the task location if location permissions are granted
+
     val imageBitmap = todo.imageBytes?.let { byteArrayToBitmap(it) }
     val tags = viewModel.getTagsForTodo(todo.id.toLong())
     val tagsAsState by tags.collectAsState(initial = emptyList())
@@ -47,48 +51,53 @@ fun ViewTodo(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
+
+        // This section renders the image associated with the task as a banner
         BannerImageDisplay(imageBitmap)
 
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(todo.title, style = MaterialTheme.typography.headlineMedium)
-                Divider(Modifier.padding(vertical = 8.dp))
 
-                Text("Priority: ${todo.priority.name}", style = MaterialTheme.typography.bodyLarge)
-                Divider(Modifier.padding(vertical = 8.dp))
+        // This section shows detailed information about the task
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(todo.title, style = MaterialTheme.typography.headlineMedium)
+            Divider(Modifier.padding(vertical = 8.dp))
 
-                Text(todo.description, style = MaterialTheme.typography.bodyMedium)
-                Divider(Modifier.padding(vertical = 8.dp))
+            Text("Priority: ${todo.priority.name}", style = MaterialTheme.typography.bodyLarge)
+            Divider(Modifier.padding(vertical = 8.dp))
 
-                Text(
-                    "To Complete By: ${formatDate(todo.toCompleteByDate)}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Divider(Modifier.padding(vertical = 8.dp))
+            Text(todo.description, style = MaterialTheme.typography.bodyMedium)
+            Divider(Modifier.padding(vertical = 8.dp))
 
-                Text(
-                    "Tags: ${tagsAsState.joinToString { it.title }}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Divider(Modifier.padding(vertical = 8.dp))
+            Text(
+                "To Complete By: ${formatDate(todo.toCompleteByDate)}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Divider(Modifier.padding(vertical = 8.dp))
 
-                Text("Latitude: ${todo.latitude}", style = MaterialTheme.typography.bodyMedium)
-                Text("Longitude: ${todo.longitude}", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                "Tags: ${tagsAsState.joinToString { it.title }}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Divider(Modifier.padding(vertical = 8.dp))
 
-                if (locationViewModel?.valid() == true) {
-                    calculatedDistance?.let {
-                        Text("Distance: $it meters", style = MaterialTheme.typography.bodyMedium)
-                    }
-                } else {
-                    Text("Distance: Location Permission is not granted", style = MaterialTheme.typography.bodyMedium)
+            Text("Latitude: ${todo.latitude}", style = MaterialTheme.typography.bodyMedium)
+            Text("Longitude: ${todo.longitude}", style = MaterialTheme.typography.bodyMedium)
+
+            // Displaying the distance based on whether it's in meters or kilometers
+            if (locationViewModel?.valid() == true) {
+                calculatedDistance?.let {
+                    Text("Distance: ${formatDistance(it)}", style = MaterialTheme.typography.bodyMedium)
                 }
-
-
+            } else {
+                Text("Distance: Location Permission is not granted", style = MaterialTheme.typography.bodyMedium)
             }
+        }
     }
 }
 
 @Composable
 fun BannerImageDisplay(imageBitmap: Bitmap?) {
+    // Displays an image for the task if available - If no image is present show placeholder icon
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -112,6 +121,19 @@ fun BannerImageDisplay(imageBitmap: Bitmap?) {
 }
 
 fun formatDate(date: Date): String {
+    // Formats a Date object into a readable string format
+
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     return dateFormat.format(date)
+}
+
+fun formatDistance(distance: Float): String {
+    // Format distance to KM if above 1000 meters
+
+    return if (distance < 1000) {
+        "${distance.toInt()} meters"
+    } else {
+        val distanceInKm = distance / 1000
+        String.format("%.2f kilometers", distanceInKm)
+    }
 }

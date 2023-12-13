@@ -68,12 +68,16 @@ import com.example.todo.services.GeoLocationService
 import com.example.todo.viewmodels.LocationViewModel
 import com.example.todo.entities.DogEntity
 
+/**
+ * The main activity/entry point of the application
+ * It initialises the necessary services and sets the content view.
+ */
 class MainActivity : ComponentActivity() {
+    // ViewModels for todos, dogs initialised
     private val todosViewModel: TodosViewModel by viewModels {
         TodosViewModelFactory(
             (application as TodoApplication).todoDAO,
-            (application as TodoApplication).dogDAO,
-            (application as TodoApplication).tagDAO
+            (application as TodoApplication).dogDAO
         )
     }
     private val dogViewModel: DogViewModel by viewModels {
@@ -83,13 +87,20 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    /**
+     * Called when the activity is starting
+     * Initialises the GeoLocationService, checks for permissions and sets the content
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        // Initialise the GeoLocation service and request necessary permissions
         GeoLocationService.initialiseService(applicationContext)
         if (!hasPermission()) {
             requestFineLocationPermission()
         }
+
+        // Set the UI content
         setContent {
             val locationViewModel = viewModel<LocationViewModel>()
             GeoLocationService.locationViewModel = locationViewModel
@@ -98,7 +109,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ){
-                    // Display the appropriate screen based on the presence of dogs
+                    // Display the appropriate screen based on if the dog has been set yet
                     val navController = rememberNavController()
                     val dog by dogViewModel.dog.collectAsState()
 
@@ -163,6 +174,10 @@ object Routes {
     const val HISTORY = "history"
 }
 
+/**
+ * A composable to display the main screen of the application
+ * It includes a top bar, bottom navigation, and navigates between different screens
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
@@ -181,7 +196,7 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Your Dog Is: $moodText") },
+                title = { Text("Your Dog Is Feeling: $moodText") },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = moodColor)
             )
         },
@@ -263,6 +278,10 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
     }
 }
 
+/**
+ * A composable function to display a single task row
+ * It shows the task's title, allows marking as completed, editing, viewing, and deleting
+ */
 @Composable
 fun TaskRow(
     task: TodoEntity,

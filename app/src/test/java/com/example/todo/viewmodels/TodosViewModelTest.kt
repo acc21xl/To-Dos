@@ -31,7 +31,6 @@ class TodosViewModelTest {
     private lateinit var todosViewModel: TodosViewModel
     private val todoDAO: TodoDAO = mockk(relaxed = true)
     private val dogDAO: DogDAO = mockk(relaxed = true)
-    private val tagDAO: TagDAO = mockk(relaxed = true)
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var sampleTodo: TodoEntity
     private lateinit var sampleDog: DogEntity
@@ -85,7 +84,7 @@ class TodosViewModelTest {
         coEvery { todoDAO.getCompletedTodos() } returns flowOf(emptyList())
 
         // Instantiate the ViewModel
-        todosViewModel = TodosViewModel(todoDAO, dogDAO, tagDAO)
+        todosViewModel = TodosViewModel(todoDAO, dogDAO)
     }
 
     @After

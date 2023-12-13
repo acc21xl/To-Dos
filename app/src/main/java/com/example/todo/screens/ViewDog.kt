@@ -41,17 +41,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 
-// Show details about your dog
 @Composable
 fun ViewDog(navController: NavController, viewModel: DogViewModel) {
+    // Displays detailed information about the user's dog, including name, breed, birthday,
+    // notes, and mood
+    // Provides an option to edit the dog's details in a dialog
+
     val dog by viewModel.dog.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
-
-
     val moodScoresState = viewModel.recentMoodScores.collectAsState()
     val moodScores = moodScoresState.value
-
     val averageMood = if (moodScores.isNotEmpty()) {
         moodScores.average()
     } else {
@@ -69,7 +69,6 @@ fun ViewDog(navController: NavController, viewModel: DogViewModel) {
         if (dog != null) {
             // Check if there are image bytes
             if (dog!!.imageBytes?.isNotEmpty() == true) {
-                // Convert image bytes to Bitmap
                 val bitmap = dog!!.imageBytes?.toBitmap()
 
                 // Display image using Image composable
@@ -108,6 +107,8 @@ fun ViewDog(navController: NavController, viewModel: DogViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
             MoodProgressBar(averageMood)
+
+            // This section handles editing the dog via a dialog
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
@@ -145,6 +146,9 @@ fun ViewDog(navController: NavController, viewModel: DogViewModel) {
 
 @Composable
 fun MoodProgressBar(averageMood: Double) {
+    // Displays a visual representation of the dog's mood as a color-coded set of circles
+    // Shows the text for the average mood score based on recent tasks
+
     val moodColors = listOf(
         Color.Red,        // 1 - Very Unhappy
         Color(0xFFFFA500),// 2 - Unhappy
@@ -199,6 +203,8 @@ fun MoodProgressBar(averageMood: Double) {
 }
 
 fun ByteArray.toBitmap(): Bitmap {
+    // Extension method to convert a ByteArray to a Bitmap for displaying images
+
     return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
 

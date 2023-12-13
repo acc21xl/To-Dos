@@ -10,6 +10,12 @@ import com.example.todo.viewmodels.LocationViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+/**
+ * Service object to handle geolocation
+ * It listens to location updates and performs operations based on the location changes
+ * This service interacts with the LocationViewModel to update UI components based on location data
+ * and with the TodoDatabase to perform database operations related to location
+ */
 @Suppress("StaticFieldLeak")
 object GeoLocationService: LocationListener {
     var locationViewModel: LocationViewModel? = null

@@ -6,6 +6,11 @@ import com.example.todo.enums.Priority
 import com.example.todo.enums.Status
 import java.util.Date
 
+/**
+ * This class maps to a table in the database with fields for each todo item's properties,
+ * The primary key for each todo item is auto-generated to ensure uniqueness
+ * The class includes fields for image storage, task completion status, and related dog information
+ */
 @Entity(
     tableName = TodoEntity.TABLE_NAME
 )

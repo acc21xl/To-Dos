@@ -12,6 +12,12 @@ import com.example.todo.entities.TodoEntity
 import com.example.todo.entities.TodoTagJoin
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Data Access Object for the Todos
+ * This interface defines the database operations related to Todos like insert, update, delete,
+ * and queries
+ * Contains some custom queries for inserting and deleting Todos with foreign key constraints
+ */
 @Dao
 interface TodoDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
