@@ -33,7 +33,7 @@ class DogViewModel(private val dogDAO: DogDAO,
         loadCompletedTasks()
     }
 
-    private fun loadDog() {
+    fun loadDog() {
         viewModelScope.launch {
             val dog = dogDAO.getDog()
             _dog.value = dog
@@ -87,7 +87,7 @@ class DogViewModel(private val dogDAO: DogDAO,
     /**
      * Loads completed tasks from the database and updates the recent mood scores.
      */
-    private fun loadCompletedTasks() {
+    fun loadCompletedTasks() {
         viewModelScope.launch {
             todoDAO.getCompletedTodos().collect { listOfCompletedTodos ->
                 _completedTasks.value = listOfCompletedTodos
@@ -100,7 +100,7 @@ class DogViewModel(private val dogDAO: DogDAO,
      * Updates the recent mood scores based on the latest completed tasks.
      * @param completedTodos List of recently completed TodoEntity items.
      */
-    private fun updateRecentMoodScores(completedTodos: List<TodoEntity>) {
+    fun updateRecentMoodScores(completedTodos: List<TodoEntity>) {
         val moodScores = completedTodos
             .filter { it.moodScore != null }
             .sortedByDescending { it.completionDate ?: it.creationDate }

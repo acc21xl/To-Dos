@@ -1,8 +1,12 @@
 package com.example.todo.viewmodels
 
+import androidx.compose.ui.graphics.Color
 import com.example.todo.data.DogDAO
 import com.example.todo.data.TodoDAO
 import com.example.todo.entities.DogEntity
+import com.example.todo.entities.TodoEntity
+import com.example.todo.enums.Priority
+import com.example.todo.enums.Status
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
 import org.junit.*
@@ -48,15 +52,6 @@ class DogViewModelTest {
         Dispatchers.resetMain() // Reset main dispatcher to the original Main dispatcher
     }
 
-    // Test that loadDog loads the dog from the DAO
-    @Test
-    fun `loadDog loads dog on init`() = runTest {
-        val dog = dogViewModel.dog.value
-        assertNotNull(dog, "Dog should not be null")
-        assertEquals("Buddy", dog?.name, "Loaded dog's name should be Buddy")
-        assertTrue(dogViewModel.completedTasks.value.isEmpty(), "Initial completed tasks should be empty")
-    }
-
     @Test
     fun `createDog invokes DAO insert method`() = runTest {
         val newDog = DogEntity(
@@ -91,5 +86,102 @@ class DogViewModelTest {
         coVerify { dogDAO.delete(dogToDelete) }
     }
 
+    @Test
+    fun `loadDog sets dog value correctly`() = runTest {
+        val sampleDog = DogEntity(
+            name = "Max",
+            imageBytes = null,
+            breed = "Golden Retriever",
+            birthdayDate = Date(),
+            notes = "Playful",
+            deleted = false
+        )
+        coEvery { dogDAO.getDog() } returns sampleDog
+
+        dogViewModel.loadDog()
+        advanceUntilIdle()
+
+        assertEquals(sampleDog, dogViewModel.dog.value)
+    }
+
+    @Test
+    fun `loadCompletedTasks loads tasks correctly`() = runTest {
+        val sampleTasks = listOf(
+            TodoEntity(
+            id = 1,
+            title = "Task",
+            description = "This is a sample description",
+            priority = Priority.LOW,
+            imageBytes = null,
+            latitude = null,
+            longitude = null,
+            status = Status.PENDING,
+            creationDate = Date(),
+            isCompleted = false,
+            toCompleteByDate = Date(),
+            completionDate = null,
+            dogId = 1,
+            moodScore = 5,
+            deleted = false
+        )
+        )
+        coEvery { todoDAO.getCompletedTodos() } returns flowOf(sampleTasks)
+
+        dogViewModel.loadCompletedTasks()
+        advanceUntilIdle()
+
+        assertEquals(sampleTasks, dogViewModel.completedTasks.value)
+    }
+
+    @Test
+    fun `updateRecentMoodScores updates recentMoodScores correctly`() = runTest {
+        val sampleTasks = listOf(
+            TodoEntity(id = 1,
+                title = "Task",
+                description = "This is a sample description",
+                priority = Priority.LOW,
+                imageBytes = null,
+                latitude = null,
+                longitude = null,
+                status = Status.PENDING,
+                creationDate = Date(),
+                isCompleted = false,
+                toCompleteByDate = Date(),
+                completionDate = null,
+                dogId = 1,
+                moodScore = 3,
+                deleted = false),
+            TodoEntity(id = 2,
+                title = "Task",
+                description = "This is a sample description",
+                priority = Priority.LOW,
+                imageBytes = null,
+                latitude = null,
+                longitude = null,
+                status = Status.PENDING,
+                creationDate = Date(),
+                isCompleted = false,
+                toCompleteByDate = Date(),
+                completionDate = null,
+                dogId = 1,
+                moodScore = 5,
+                deleted = false)
+        )
+        dogViewModel.updateRecentMoodScores(sampleTasks)
+
+        assertEquals(listOf(3, 5), dogViewModel.recentMoodScores.value)
+    }
+
+    @Test
+    fun `getMoodColor returns correct color for mood score`() {
+        val color = dogViewModel.getMoodColor(4.0) // Example for a 'Happy' mood
+        assertEquals(Color(0xFF90EE90), color) // Expected color for 'Happy'
+    }
+
+    @Test
+    fun `getMoodText returns correct text for mood score`() {
+        val text = dogViewModel.getMoodText(2.5) // Example for a 'Neutral' mood
+        assertEquals("Neutral", text)
+    }
 }
 

@@ -51,7 +51,7 @@ class TodosViewModel(
     /**
      * Loads and updates the list of active tasks
      */
-    private fun loadActiveTasks() {
+    fun loadActiveTasks() {
         viewModelScope.launch {
             todoDAO.getActiveTodos().collect { listOfActiveTodos ->
                 _activeTasks.value = listOfActiveTodos
@@ -62,7 +62,7 @@ class TodosViewModel(
     /**
      * Loads and updates the list of all tasks
      */
-    private fun loadTasks() {
+    fun loadTasks() {
         viewModelScope.launch {
             todoDAO.getAllTodos().collect { listOfTodos ->
                 _tasks.value = listOfTodos
@@ -73,7 +73,7 @@ class TodosViewModel(
     /**
      * Loads the first dog from the database (Only ever one dog in DB)
      */
-    private fun loadDog() {
+    fun loadDog() {
         viewModelScope.launch {
             val dog = dogDAO.getDog()
             _dog.value = dog

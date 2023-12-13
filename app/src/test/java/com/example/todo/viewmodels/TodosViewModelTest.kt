@@ -17,8 +17,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import java.util.Date
@@ -148,6 +150,66 @@ class TodosViewModelTest {
         coVerify { todoDAO.updateTodoWithTags(updatedTodo, sampleTags) }
     }
 
+    @Test
+    fun `loadActiveTasks loads active tasks correctly`() = runTest {
+        val activeTask = createSampleTodo().copy(isCompleted = false)
+        coEvery { todoDAO.getActiveTodos() } returns flowOf(listOf(activeTask))
 
+        todosViewModel.loadActiveTasks()
+        advanceUntilIdle()
+
+        assertEquals(listOf(activeTask), todosViewModel.activeTasks.value)
+    }
+
+    @Test
+    fun `loadTasks loads all tasks correctly`() = runTest {
+        val allTasks = listOf(createSampleTodo(), createSampleTodo(id = 2))
+        coEvery { todoDAO.getAllTodos() } returns flowOf(allTasks)
+
+        todosViewModel.loadTasks()
+        advanceUntilIdle()
+
+        assertEquals(allTasks, todosViewModel.tasks.value)
+    }
+
+    @Test
+    fun `loadDog loads dog correctly`() = runTest {
+        coEvery { dogDAO.getDog() } returns sampleDog
+
+        todosViewModel.loadDog()
+        advanceUntilIdle()
+
+        assertEquals(sampleDog, todosViewModel.dog.value)
+    }
+
+    @Test
+    fun `updateTask updates a task correctly`() = runTest {
+        val updatedTask = createSampleTodo().copy(title = "Updated Task")
+
+        todosViewModel.updateTask(updatedTask)
+        advanceUntilIdle()
+
+        coVerify { todoDAO.update(updatedTask) }
+    }
+
+    @Test
+    fun `deleteTask deletes a task correctly`() = runTest {
+        val taskId = sampleTodo.id.toLong()
+
+        todosViewModel.deleteTask(taskId)
+        advanceUntilIdle()
+
+        coVerify { todoDAO.deleteTodoTags(taskId) }
+        coVerify { todoDAO.deleteTask(taskId) }
+    }
+
+    @Test
+    fun `getTagsForTodo returns correct tags`() = runTest {
+        val todoId = 1L
+        coEvery { todoDAO.getTagsForTodo(todoId) } returns flowOf(sampleTags)
+
+        val tagsFlow = todosViewModel.getTagsForTodo(todoId)
+        assertEquals(sampleTags, tagsFlow.first(), "Tags should match the expected data")
+    }
 
 }
