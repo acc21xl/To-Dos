@@ -66,7 +66,8 @@ interface TodoDAO {
         }
     }
 
-    @Query("SELECT tags.* FROM tags JOIN todo_tag_join ON tags.id = todo_tag_join.tagId WHERE todo_tag_join.todoId = :todoId")
+    @Query("SELECT tags.* FROM tags JOIN todo_tag_join ON tags.id = todo_tag_join.tagId " +
+            "WHERE todo_tag_join.todoId = :todoId")
     fun getTagsForTodo(todoId: Long): Flow<List<TagEntity>>
 
     @Query("DELETE FROM todo_tag_join WHERE todoId = :todoId")

@@ -55,7 +55,6 @@ fun ViewTodo(
         // This section renders the image associated with the task as a banner
         BannerImageDisplay(imageBitmap)
 
-
         // This section shows detailed information about the task
         Column(modifier = Modifier.padding(16.dp)) {
             Text(todo.title, style = MaterialTheme.typography.headlineMedium)

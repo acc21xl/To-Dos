@@ -13,9 +13,8 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
- * ViewModel for managing dog-related data
- * This ViewModel handles operations related to DogEntity, such as creating, updating,
- * and deleting dogs
+ * This ViewModel handles operations related to the Dog, such as creating, updating,
+ * and deleting dogs (There is ever only one)
  * It also manages the retrieval of mood scores based on completed tasks and provides utility
  * methods for converting these mood scores into color and text representations
  */
@@ -64,7 +63,7 @@ class DogViewModel(private val dogDAO: DogDAO,
     }
 
     /**
-     *
+     * Either creates or updates and existing dog depending on if one exists or not
      */
     fun createOrUpdateDog(newDogEntity: DogEntity) {
         viewModelScope.launch {
@@ -85,7 +84,7 @@ class DogViewModel(private val dogDAO: DogDAO,
     }
 
     /**
-     * Loads completed tasks from the database and updates the recent mood scores.
+     * Loads completed tasks from the database and updates the recent mood scores
      */
     fun loadCompletedTasks() {
         viewModelScope.launch {
@@ -97,8 +96,7 @@ class DogViewModel(private val dogDAO: DogDAO,
     }
 
     /**
-     * Updates the recent mood scores based on the latest completed tasks.
-     * @param completedTodos List of recently completed TodoEntity items.
+     * Updates the recent mood scores based on the latest completed tasks
      */
     fun updateRecentMoodScores(completedTodos: List<TodoEntity>) {
         val moodScores = completedTodos
@@ -111,9 +109,7 @@ class DogViewModel(private val dogDAO: DogDAO,
     }
 
     /**
-     * Converts an average mood score into a corresponding color representation.
-     * @param averageMood The average mood score.
-     * @return The color representing the mood score.
+     * Converts an average mood score into a corresponding color representation
      */
     fun getMoodColor(averageMood: Double): Color {
         val moodColors = listOf(
@@ -129,9 +125,7 @@ class DogViewModel(private val dogDAO: DogDAO,
     }
 
     /**
-     * Converts an average mood score into a corresponding text representation.
-     * @param averageMood The average mood score.
-     * @return The text representing the mood score.
+     * Converts an average mood score into a corresponding text representation
      */
     fun getMoodText(averageMood: Double): String {
 
