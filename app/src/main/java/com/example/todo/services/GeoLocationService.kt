@@ -61,13 +61,12 @@ object GeoLocationService: LocationListener {
                     val distance = currentLocation.distanceTo(todoLocation)
                     if (distance < 500) {
                         context?.let { ctx ->
-                            MyNotification(ctx, "Nearby TODO", "You are within 500m of ${todo.title}").forNotification()
+                            MyNotification(ctx, "Nearby TODO", "You are within 500m " +
+                                    "of ${todo.title}").forNotification()
                         }
                     }
                 }
             }
         }
     }
-
-
 }
