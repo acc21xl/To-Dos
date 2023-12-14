@@ -55,6 +55,18 @@ class TodosViewModelTest {
             deleted = false
         )
     }
+
+    private fun createSampleDog(id: Int = 1): DogEntity {
+        return DogEntity(
+            id = id,
+            name = "Buddy",
+            imageBytes = null,
+            breed = "Labrador",
+            birthdayDate = Date(),
+            notes = "Friendly dog",
+            deleted = false
+        )
+    }
     private fun createSampleTag(id: Int = 1): TagEntity {
         return TagEntity(
             id = id,
@@ -68,15 +80,7 @@ class TodosViewModelTest {
         Dispatchers.setMain(testDispatcher) // Set a test dispatcher
         // Mock initialization
         sampleTodo = createSampleTodo()
-        sampleDog = DogEntity(
-            id = 1,
-            name = "Buddy",
-            imageBytes = null,
-            breed = "Labrador",
-            birthdayDate = Date(),
-            notes = "Friendly dog",
-            deleted = false
-        )
+        sampleDog = createSampleDog()
         sampleTags = listOf(createSampleTag())
 
         coEvery { todoDAO.getAllTodos() } returns flowOf(listOf(sampleTodo))
@@ -91,7 +95,6 @@ class TodosViewModelTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
-//        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
