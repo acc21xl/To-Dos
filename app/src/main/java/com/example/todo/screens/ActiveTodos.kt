@@ -116,7 +116,8 @@ fun ActiveTodos(todosViewModel: TodosViewModel) {
             },
             onSubmit = {
                 currentTask?.let {
-                    todosViewModel.updateTask(it.copy(isCompleted = true, moodScore = selectedMood.score))
+                    todosViewModel.updateTask(it.copy(isCompleted = true,
+                        moodScore = selectedMood.score))
                 }
                 showMoodDialog = false
             },

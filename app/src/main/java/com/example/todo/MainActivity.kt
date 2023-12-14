@@ -247,17 +247,17 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
                 onClose = { showTodoForm = false }
             )
         } else {
-            NavHost(navController, startDestination = "tasks",
+            NavHost(navController, startDestination = Routes.TASKS,
                 modifier = Modifier.padding(paddingValues)) {
-                composable("tasks") { ActiveTodos(todosViewModel) }
-                composable("history") {
+                composable(Routes.TASKS) { ActiveTodos(todosViewModel) }
+                composable(Routes.HISTORY) {
                     // Force UI refresh when navigating to the "history" screen
                     LaunchedEffect(Unit) {
                         todosViewModel.loadCompletedTasks()
                     }
                     TodoHistory(todosViewModel)
                 }
-                composable("createDogScreen") {
+                composable(Routes.CREATE_DOG_SCREEN) {
                     DogForm(
                         viewModel = dogViewModel,
                         navController = navController,
@@ -267,10 +267,10 @@ fun MainScreen(todosViewModel: TodosViewModel, dogViewModel: DogViewModel) {
                     )
 
                 }
-                composable("dogDetails") {
+                composable(Routes.DOG_DETAILS) {
                     ViewDog(navController, dogViewModel)
                 }
-                composable("typicaltasks") {
+                composable(Routes.TYPICAL_TASKS) {
                     TypicalTodos(todosViewModel)
                 }
             }
