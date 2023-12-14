@@ -7,5 +7,5 @@ package com.example.todo.enums
  * This enum is used to quantify and categorize the mood of the dog
  */
 enum class MoodScore(val score: Int) {
-    UPSET(1), SAD(4), NEUTRAL(3), HAPPY(4), EXCELLENT(5)
+    UPSET(1), SAD(2), NEUTRAL(3), HAPPY(4), EXCELLENT(5)
 }
